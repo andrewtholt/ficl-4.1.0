@@ -490,7 +490,10 @@ typedef float ficlFloat;
 ** FICL_ROBUST == 2 also enables checking in many primitives
 */
 
+// #define FICL_ROBUST (0)
+
 #if !defined FICL_ROBUST
+#warning "No FICL_ROBUST"
 #define FICL_ROBUST (2)
 #endif /* FICL_ROBUST */
 

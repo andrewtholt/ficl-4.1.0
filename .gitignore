@@ -4,3 +4,4 @@ ficl
 
 *.a
 cscope.out
+.gdb_history
