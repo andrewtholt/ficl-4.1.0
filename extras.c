@@ -255,6 +255,8 @@ static void athDlOpen(ficlVm * vm) {
     libLen = ficlStackPopInteger(vm->dataStack);
     lib = ficlStackPopPointer(vm->dataStack);
 
+    lib[libLen] = '\0';
+
     res=(void *)dlopen(lib,RTLD_LAZY );
 
     if(!res) {
@@ -270,6 +272,133 @@ static void athDlOpen(ficlVm * vm) {
     }    
 }
 
+#define MAX_ARGS 5
+// Note the arguments are in reverse order to the C function.
+// i.e:
+// void func(a,b,c)
+//
+// Is called by
+//
+// c b a 0 3 <ptr to func>
+//
+// arg0 ... argn <res_count> <arg_count> <function ptr>
+// 
+static void athDlExec(ficlVm * vm) {
+    int i;
+    int argCount=0;
+    int resCount=0;
+
+    void *(*func)();
+    void *args[MAX_ARGS];
+    void *res;
+
+    func = ficlStackPopPointer(vm->dataStack);
+    argCount = ficlStackPopInteger(vm->dataStack);
+    resCount = ficlStackPopInteger(vm->dataStack);
+
+    for (i=0; i < argCount;i++) {
+        args[i]  = ficlStackPopPointer(vm->dataStack);
+    }
+
+    if ( 0 == argCount && 0 == resCount ) {
+        (void)(*func)();
+    } else {
+        if(resCount > 0 ) {
+            switch(argCount) {
+                case 1:
+                    res=(*func)(args[0]);
+                    break;
+                case 2:
+                    res=(*func)(args[1],args[0]);
+                    break;
+                case 3:
+                    res=(*func)(args[2],args[1],args[0]);
+                    break;
+                case 4:
+                    res=(*func)(args[3],args[2],args[1],args[0]);
+                    break;
+                case 5:
+                    res=(*func)(args[4],args[3],args[2],args[1],args[0]);
+                    break;
+                default:
+                    printf("Too many args\n");
+                    break;
+            }
+            ficlStackPushPointer( vm->dataStack,res);
+        } else {
+            switch(argCount) {
+                case 1:
+                    (void)(*func)(args[0]);
+                    break;
+                case 2:
+                    (void)(*func)(args[1],args[0]);
+                    break;
+                case 3:
+                    (void)(*func)(args[2],args[1],args[0]);
+                    break;
+                case 4:
+                    (void)(*func)(args[3],args[2],args[1],args[0]);
+                    break;
+                case 5:
+                    (void)(*func)(args[4],args[3],args[2],args[1],args[0]);
+                    break;
+                default:
+                    printf("Too many args\n");
+                    break;
+            }
+        }
+    }
+
+}
+
+static void athDlClose(ficlVm * vm) {
+    int res; 
+    void *h;
+
+    h = ficlStackPopPointer( vm->dataStack);
+    res = dlclose(h);
+    ficlStackPushInteger(vm->dataStack,res);
+}
+
+static void athDlError(ficlVm *vm) {
+    perror(dlerror());
+}
+
+
+/*
+ *    name len handle -- symbol_ptr
+ */
+static void athDlSym(ficlVm * vm) {
+//    void *sym;
+    void *h;
+    char *symbol;
+    char *error;
+    char flag=0;
+
+    int symbolLen = 0;
+
+    h = ficlStackPopPointer( vm->dataStack);
+    symbolLen = ficlStackPopInteger( vm->dataStack);
+    symbol = ficlStackPopPointer(vm->dataStack);
+    symbol[symbolLen]=0x00;
+
+    error = dlerror();
+    symbol = dlsym(h,symbol);
+    error = dlerror();
+
+    if( error != (char *)NULL ) {
+        fprintf(stderr,"%s\n",error);
+        flag=-1;
+    } else {
+        flag=0;
+    }
+
+    ficlStackPushPointer( vm->dataStack,symbol);
+    ficlStackPushInteger( vm->dataStack,flag);
+
+}
+
+
 #endif
 
 void ficlSystemCompileExtras(ficlSystem *system)
@@ -277,6 +406,10 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionary *dictionary = ficlSystemGetDictionary(system);
 #ifdef ATH
     ficlDictionarySetPrimitive(dictionary, "dlopen", athDlOpen, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "dlclose", athDlClose, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "dlsym", athDlSym, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "dlerror", athDlError, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "dlexec", athDlExec, FICL_WORD_DEFAULT);
 #endif
 
     ficlDictionarySetPrimitive(dictionary, "break",    ficlPrimitiveBreak,    FICL_WORD_DEFAULT);

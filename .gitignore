@@ -1,0 +1,6 @@
+
+*.o
+ficl
+
+*.a
+cscope.out
