@@ -3,10 +3,14 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "ficl.h"
+#include "extras.h"
 
-
+int verbose;
 #ifndef FICL_ANSI
 
 /*
@@ -63,9 +67,181 @@ static void ficlPrimitiveClock(ficlVm *vm)
     return;
 }
 
+char *strsave( char *s ) {
+    char *p = (char *)NULL;
+
+    p = ficlMalloc(strlen(s)+1);
+    strcpy(p,s);
+
+    return(p);
+}
+
+
 #endif /* FICL_ANSI */
 
+/*
+ ** Ficl add-in to load a text file and execute it...
+ ** Cheesy, but illustrative.
+ ** Line oriented... filename is newline (or NULL) delimited.
+ ** Example:
+ **    load test.f
+ */
 
+char *pathToFile(char *fname) {
+    int             i;
+    int             fd;
+    extern char    *loadPath;
+    char            path[255];
+    char            scr[255];
+    char           *scratch;
+    char           *tok;
+    char           *dirs[32];
+
+    if ((loadPath == (char *) NULL) || (*fname == '/') || (*fname == '.'))
+        return (fname);
+
+    strcpy(path, loadPath);
+
+    tok = (char *) strtok(path, ":");
+    i = 0;
+
+    for (; tok != (char *) NULL;) {
+        strcpy(scr, tok);
+        strcat(scr, "/");
+        strcat(scr, fname);
+
+        scratch = strsave(scr);
+
+        fd = open(scratch, O_RDONLY);
+
+        if (fd >= 0) {
+            close(fd);
+            return (scratch);
+        }
+        tok = (char *) strtok(NULL, ":");
+    }   
+    return (NULL);
+}
+
+static void ficlDollarPrimitiveLoad(ficlVm * vm) {
+    char            buffer[BUFFER_SIZE];
+    char            filename[BUFFER_SIZE];
+    char            fullName[255];
+
+    char           *scratch;
+    ficlCountedString *counted = (ficlCountedString *) filename;
+    int             line = 0;
+    FILE           *f;
+    int             result = 0;
+    ficlCell        oldSourceId;
+    ficlString      s;
+    int             nameLen;
+    char           *name;
+    char *ptr=(char *)NULL;
+
+    nameLen = ficlStackPopInteger(vm->dataStack);
+    ptr=ficlStackPopPointer(vm->dataStack);
+    name=strtok(ptr," ");
+    name[nameLen] = '\0';
+
+    scratch = pathToFile(name);
+
+    if (scratch == (char *) NULL) {
+        sprintf(buffer, "File not found :%s", name);
+        ficlVmTextOut(vm, buffer);
+        ficlVmTextOut(vm, FICL_COUNTED_STRING_GET_POINTER(*counted));
+        ficlVmTextOut(vm, "\n");
+        ficlVmThrow(vm, FICL_VM_STATUS_QUIT);
+    } else {
+        strcpy(fullName, scratch);
+    }
+    /*
+     *      ** get the file's size and make sure it exists
+     *           */
+    f = fopen(fullName, "r");
+    if (!f) {
+        sprintf(buffer, "Unable to open file %s", name);
+        ficlVmTextOut(vm, buffer);
+        ficlVmTextOut(vm, FICL_COUNTED_STRING_GET_POINTER(*counted));
+        ficlVmTextOut(vm, "\n");
+        ficlVmThrow(vm, FICL_VM_STATUS_QUIT);
+    }
+    oldSourceId = vm->sourceId;
+    vm->sourceId.p = (void *) f;
+
+    /* feed each line to ficlExec */
+    while (fgets(buffer, BUFFER_SIZE, f)) {
+        int             length = strlen(buffer) - 1;
+
+        line++;
+        if (length <= 0)
+            continue;
+
+        if (buffer[length] == '\n')
+            buffer[length--] = '\0';
+
+        FICL_STRING_SET_POINTER(s, buffer);
+        FICL_STRING_SET_LENGTH(s, length + 1);
+        result = ficlVmExecuteString(vm, s);
+        /* handle "bye" in loaded files. --lch */
+        switch (result) {
+            case FICL_VM_STATUS_OUT_OF_TEXT:
+                break;
+            case FICL_VM_STATUS_USER_EXIT:
+                exit(0);
+                break;
+
+            default:
+                vm->sourceId = oldSourceId;
+                fclose(f);
+                ficlVmThrowError(vm, "Error loading file <%s> line %d", FICL_COUNTED_STRING_GET_POINTER(*counted), line);
+                break;
+        }
+    }
+    /*
+     ** Pass an empty line with SOURCE-ID == -1 to flush
+     ** any pending REFILLs (as required by FILE wordset)
+     */
+    vm->sourceId.i = -1;
+    FICL_STRING_SET_FROM_CSTRING(s, "");
+    ficlVmExecuteString(vm, s);
+
+    vm->sourceId = oldSourceId;
+    fclose(f);
+
+    /* handle "bye" in loaded files. --lch */
+    if (result == FICL_VM_STATUS_USER_EXIT)
+        ficlVmThrow(vm, FICL_VM_STATUS_USER_EXIT);
+    return;
+}
+
+static void ficlPrimitiveLoad(ficlVm * vm) {
+    char            buffer[BUFFER_SIZE];
+    char            filename[BUFFER_SIZE];
+    char            scratch[255];
+    char            tmp[255];
+
+    extern char    *loadPath;
+    char           *name;
+    char           *tok;
+    char           *dirs[32];
+
+    int             i = 0;
+    int             fd;
+
+    ficlCountedString *counted = (ficlCountedString *) filename;
+    ficlVmGetString(vm, counted, '\n');
+
+    if (FICL_COUNTED_STRING_GET_LENGTH(*counted) <= 0) {
+        ficlVmTextOut(vm, "Warning (load): nothing happened\n");
+        return;
+    }
+    name = FICL_COUNTED_STRING_GET_POINTER(*counted);
+
+    ficlStackPushPointer(vm->dataStack, name);
+    ficlStackPushInteger(vm->dataStack, FICL_COUNTED_STRING_GET_LENGTH(*counted));
+    ficlDollarPrimitiveLoad(vm);
+}
 /*
  ** Ficl interface to system (ANSI)
  ** Gets a newline (or NULL) delimited string from the input
@@ -105,6 +281,8 @@ static void ficlPrimitiveSystem(ficlVm *vm)
  ** Example:
  **    load test.f
  */
+
+#if 0
 #define BUFFER_SIZE 256
 static void ficlPrimitiveLoad(ficlVm *vm)
 {
@@ -186,7 +364,7 @@ static void ficlPrimitiveLoad(ficlVm *vm)
         ficlVmThrow(vm, FICL_VM_STATUS_USER_EXIT);
     return;
 }
-
+#endif
 
 
 /*
@@ -369,7 +547,7 @@ static void athDlError(ficlVm *vm) {
  *    name len handle -- symbol_ptr
  */
 static void athDlSym(ficlVm * vm) {
-//    void *sym;
+    //    void *sym;
     void *h;
     char *symbol;
     char *error;
@@ -397,6 +575,33 @@ static void athDlSym(ficlVm * vm) {
     ficlStackPushInteger( vm->dataStack,flag);
 
 }
+//
+// Stack: env_name len buffer --
+//
+static void athGetenv(ficlVm * vm) {
+    char           *ptr;
+    char           *env;
+    char           *tmp;
+
+    int             len;
+
+    len = ficlStackPopInteger(vm->dataStack);
+    env = (char *)ficlStackPopPointer(vm->dataStack);
+    ptr = (char *)ficlStackPopPointer(vm->dataStack);
+
+    env[len] = '\0';
+    tmp = getenv(env);
+
+    if (tmp) {
+        strcpy(ptr, tmp);
+        len = strlen(tmp);
+    } else {
+        len = 0; 
+    }    
+
+    ficlStackPushPointer(vm->dataStack, ptr);
+    ficlStackPushInteger(vm->dataStack, len);
+}
 
 
 #endif
@@ -410,6 +615,7 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, "dlsym", athDlSym, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "dlerror", athDlError, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "dlexec", athDlExec, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"getenv", athGetenv, FICL_WORD_DEFAULT);
 #endif
 
     ficlDictionarySetPrimitive(dictionary, "break",    ficlPrimitiveBreak,    FICL_WORD_DEFAULT);
