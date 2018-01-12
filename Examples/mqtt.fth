@@ -31,9 +31,6 @@ init
 : test
     mqtt-init drop
 
-    c" FICL" 
-    1 
-    buffer 
-    mqtt-new
+    c" FICL" 1 buffer mqtt-new
 
 ;
