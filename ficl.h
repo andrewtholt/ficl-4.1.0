@@ -203,7 +203,7 @@ extern "C" {
 #define FICL_WANT_MULTITHREADED    (0)
 #define FICL_WANT_EXTENDED_PREFIX  (0)
 
-#define FICL_ROBUST                (0)
+#define FICL_ROBUST                (2)
 
 #endif /* FICL_WANT_MINIMAL */
 
@@ -494,7 +494,7 @@ typedef float ficlFloat;
 
 #if !defined FICL_ROBUST
 #warning "No FICL_ROBUST"
-#define FICL_ROBUST (2)
+#define FICL_ROBUST (0)
 #endif /* FICL_ROBUST */
 
 
