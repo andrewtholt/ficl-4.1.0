@@ -7,6 +7,8 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#include <errno.h>
+
 #include "ficl.h"
 #include "extras.h"
 
@@ -459,7 +461,7 @@ static void athDlOpen(ficlVm * vm) {
 //
 // c b a 0 3 <ptr to func>
 //
-// arg0 ... argn <res_count> <arg_count> <function ptr>
+// argn ... arg0 <res_count> <arg_count> <function ptr>
 // 
 static void athDlExec(ficlVm * vm) {
     int i;
@@ -483,6 +485,9 @@ static void athDlExec(ficlVm * vm) {
     } else {
         if(resCount > 0 ) {
             switch(argCount) {
+                case 0:
+                    res=(*func)();
+                    break;
                 case 1:
                     res=(*func)(args[0]);
                     break;
@@ -603,6 +608,20 @@ static void athGetenv(ficlVm * vm) {
     ficlStackPushInteger(vm->dataStack, len);
 }
 
+static void athGetErrno(ficlVm * vm) {
+    extern int errno;
+    ficlStackPushInteger(vm->dataStack, errno);
+    errno = 0; 
+}
+
+static void athClrErrno(ficlVm * vm) {
+    extern int errno;
+    errno = 0; 
+}
+
+static void athPerror(ficlVm * vm) {
+        perror("ficl");
+}
 
 #endif
 
@@ -610,6 +629,10 @@ void ficlSystemCompileExtras(ficlSystem *system)
 {
     ficlDictionary *dictionary = ficlSystemGetDictionary(system);
 #ifdef ATH
+    ficlDictionarySetPrimitive(dictionary, (char *)"perror", athPerror, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"errno", athGetErrno, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"clr-errno", athClrErrno, FICL_WORD_DEFAULT);
+
     ficlDictionarySetPrimitive(dictionary, "dlopen", athDlOpen, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "dlclose", athDlClose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "dlsym", athDlSym, FICL_WORD_DEFAULT);
