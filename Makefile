@@ -60,3 +60,6 @@ unix.o: ficlplatform/unix.c $(HEADERS)
 #
 clean:
 	rm -f *.o *.a libficl.* ficl
+
+install:	ficl
+	./install.sh
