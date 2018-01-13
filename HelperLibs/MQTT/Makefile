@@ -5,3 +5,10 @@ libmqttcallback.so:	callbacks.o
 
 callbacks.o:	callbacks.c
 	gcc -fPIC -Wall -g -c -o callbacks.o callbacks.c
+
+clean:
+	rm -f *.o *.so
+
+install:	libmqttcallback.so
+	./install.sh
+

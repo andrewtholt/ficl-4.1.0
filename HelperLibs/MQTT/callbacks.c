@@ -1,9 +1,10 @@
 #include <mosquitto.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 
 struct cbMqttMessage {
-    uint8_t msgFlag;
+    uint32_t msgFlag;
     char topic[64];
     char payload[32];
 } ;
@@ -13,6 +14,11 @@ uint32_t sizeOfMessage() {
 }
 
 void messageCallback(struct mosquitto *mosq, void *obj,const struct mosquitto_message *message) { 
+    ((struct cbMqttMessage *)obj)->msgFlag=0;
+
+    strcpy(((struct cbMqttMessage *)obj)->topic,(char *)message->topic);
+    strcpy( ((struct cbMqttMessage *)obj)->payload,(char *)message->payload);
+
 }
 
 

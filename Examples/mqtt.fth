@@ -3,15 +3,17 @@ load dynamic.fth
 
 0 value init-run
 -1 value libmosquitto
+-1 value libhelper
+
 -1 value buffer
-255 constant /buffer
 
 : init
     init-run 0= if
-        /buffer allocate abort" Allocate failed" to buffer
-        buffer /buffer erase
+\        /buffer allocate abort" Allocate failed" to buffer
+\        buffer /buffer erase
 
         s" /usr/lib/x86_64-linux-gnu/libmosquitto.so.1" dlopen abort" What." to libmosquitto
+        s" /usr/local/lib/libmqttcallback.so" dlopen abort" What."  to libhelper
 
 
         -1 to init-run
@@ -19,7 +21,7 @@ load dynamic.fth
 ;
 
 init
-
+1 0 s" sizeOfMessage" libhelper dlsym abort" Not found" mkfunc /buffer
 ( result-cnt arg-cnt func-ptr -- )
 
 \ 1 1 s" test1" libmine dlsym abort" Not found" mkfunc test1
