@@ -90,14 +90,14 @@ char *strsave( char *s ) {
  */
 
 char *pathToFile(char *fname) {
-    int             i;
+
     int             fd;
     extern char    *loadPath;
     char            path[255];
     char            scr[255];
     char           *scratch;
     char           *tok;
-    char           *dirs[32];
+
 
     if ((loadPath == (char *) NULL) || (*fname == '/') || (*fname == '.'))
         return (fname);
@@ -105,7 +105,7 @@ char *pathToFile(char *fname) {
     strcpy(path, loadPath);
 
     tok = (char *) strtok(path, ":");
-    i = 0;
+
 
     for (; tok != (char *) NULL;) {
         strcpy(scr, tok);
@@ -218,18 +218,18 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
 }
 
 static void ficlPrimitiveLoad(ficlVm * vm) {
-    char            buffer[BUFFER_SIZE];
+
     char            filename[BUFFER_SIZE];
-    char            scratch[255];
-    char            tmp[255];
+
+
 
     extern char    *loadPath;
     char           *name;
-    char           *tok;
-    char           *dirs[32];
 
-    int             i = 0;
-    int             fd;
+
+
+
+
 
     ficlCountedString *counted = (ficlCountedString *) filename;
     ficlVmGetString(vm, counted, '\n');
