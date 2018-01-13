@@ -66,6 +66,15 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
     s" /home/outside/BackFloodlight/cmnd/power" s" ON" mqtt-pub
 ;
 
+: .msg
+    buffer msg-flag w@ . cr
+    buffer topic   64 type cr
+    buffer payload 32 type cr
+;
+
+0 value proliant_power
+0 value daylight
+
 : switch-backlight ( on|off -- )
     s" /home/outside/BackFloodlight/cmnd/power" 
     rot 0<> if
@@ -75,15 +84,6 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
     then
     mqtt-pub
 ;
-
-: .msg
-    buffer msg-flag w@ . cr
-    buffer topic   64 type cr
-    buffer payload 32 type cr
-;
-
-0 value proliant_power
-0 value daylight
 
 : /home/office/proliant/power
     2dup s" ON"  compare 0= if -1 to proliant_power then
