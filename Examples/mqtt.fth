@@ -21,7 +21,6 @@ endstruct msg
         s" /usr/lib/x86_64-linux-gnu/libmosquitto.so.1" dlopen abort" What." to libmosquitto
         s" /usr/local/lib/libmqttcallback.so" dlopen abort" What."  to libhelper
 
-
         -1 to init-run
     then
 ;
@@ -50,7 +49,7 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
    client 0 topic plen payload 0 1 (mqtt-pub)
 ;
 
-: test
+: setup
     mqtt-init drop
 
     s" FICL" drop 1 buffer mqtt-new ?dup 0= abort" new failed." to client
@@ -59,7 +58,7 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
 
     s" /home/office/proliant/power" mqtt-sub
 
-    client 500 1 mqtt-loop 
+\    client 500 1 mqtt-loop 
 ;
 
 : test-pub
@@ -73,13 +72,17 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
     buffer payload 32 type cr
 ;
 
-: /home/office/proliant/power
-    ." Here" cr
+0 value proliant_power
 
-    type cr
+: /home/office/proliant/power
+    2dup s" ON"  compare 0= if -1 to proliant_power then
+    2dup s" OFF" compare 0= if  0 to proliant_power then
+
+    2drop
 ;
 
 : run
+    setup
     begin 
         client 500 1 mqtt-loop
         0=
@@ -88,6 +91,8 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
             .msg
             buffer payload dup strlen
             buffer topic dup strlen evaluate
+
+            proliant_power . cr
             0 buffer msg-flag w!
         then
     repeat
