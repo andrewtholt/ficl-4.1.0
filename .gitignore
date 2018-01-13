@@ -3,6 +3,7 @@
 ficl
 
 *.a
+*.so
 cscope.out
 .gdb_history
 main
