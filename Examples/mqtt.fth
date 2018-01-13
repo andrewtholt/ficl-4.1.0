@@ -33,14 +33,22 @@ init
 1 4 s" mosquitto_connect"  libmosquitto dlsym abort" Not found" mkfunc mqtt-client 
 1 0 s" mosquitto_lib_init" libmosquitto dlsym abort" Not found" mkfunc mqtt-init \ Returns 0
 0 2 s" mosquitto_message_callback_set" libmosquitto dlsym abort" Not found" mkfunc mqtt-msg-callback-set 
-1 4 s" mosquitto_subscribe"  libmosquitto dlsym abort" Not found" mkfunc mqtt-sub 
 1 3 s" mosquitto_loop"       libmosquitto dlsym abort" Not found" mkfunc mqtt-loop 
-1 7 s" mosquitto_publish"    libmosquitto dlsym abort" Not found" mkfunc mqtt-pub 
+1 4 s" mosquitto_subscribe"  libmosquitto dlsym abort" Not found" mkfunc (mqtt-sub)
+1 7 s" mosquitto_publish"    libmosquitto dlsym abort" Not found" mkfunc (mqtt-pub)
 
 /buffer allocate abort" Allocate failed" to buffer
 buffer /buffer erase
 
 s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
+
+: mqtt-sub { topic tlen -- rc }
+    client 0 topic 0 (mqtt-sub)
+;
+
+: mqtt-pub { topic tlen payload plen -- rc }
+   client 0 topic plen payload 0 1 (mqtt-pub)
+;
 
 : test
     mqtt-init drop
@@ -49,14 +57,13 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
     client s" 192.168.0.65" drop port 10 mqtt-client abort" client failed."
     client msg-callback mqtt-msg-callback-set
 
-    client 0 s" /home/office/proliant/power" drop 0 mqtt-sub
+    s" /home/office/proliant/power" mqtt-sub
 
     client 500 1 mqtt-loop 
 ;
 
 : test-pub
-    client 0 s" /home/outside/BackFloodlight/cmnd/power" drop
-    s" ON" swap 0 1 mqtt-pub
+    s" /home/outside/BackFloodlight/cmnd/power" s" ON" mqtt-pub
 ;
 
 
@@ -66,6 +73,11 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
     buffer payload 32 type cr
 ;
 
+: /home/office/proliant/power
+    ." Here" cr
+
+    type cr
+;
 
 : run
     begin 
@@ -74,6 +86,8 @@ s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
     while
         buffer msg-flag w@ if
             .msg
+            buffer payload dup strlen
+            buffer topic dup strlen evaluate
             0 buffer msg-flag w!
         then
     repeat
