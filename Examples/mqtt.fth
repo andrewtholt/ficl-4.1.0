@@ -10,7 +10,7 @@ load dynamic.fth
 -1 value buffer
 
 struct
-    4 chars  field msg-flag
+     2 chars  field msg-flag
     64 chars field topic
     32 chars field payload
 endstruct msg    
@@ -55,3 +55,12 @@ buffer /buffer erase
 
     client 500 1 mqtt-loop 
 ;
+
+: .msg
+    buffer msg-flag w@ . cr
+    buffer topic   64 type cr
+    buffer payload 32 type cr
+;
+
+
+

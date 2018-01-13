@@ -6,7 +6,7 @@
 #include <string.h>
 
 struct cbMqttMessage {
-    uint32_t msgFlag;
+    uint16_t msgFlag;
     char topic[64];
     char payload[32];
 } ;
