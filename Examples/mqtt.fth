@@ -28,21 +28,19 @@ endstruct msg
 
 init
 1 0 s" sizeOfMessage" libhelper dlsym abort" Not found" mkfunc /buffer
-( result-cnt arg-cnt func-ptr -- )
-
-\ 1 1 s" test1" libmine dlsym abort" Not found" mkfunc test1
 
 1 3 s" mosquitto_new"      libmosquitto dlsym abort" Not found" mkfunc mqtt-new 
 1 4 s" mosquitto_connect"  libmosquitto dlsym abort" Not found" mkfunc mqtt-client 
 1 0 s" mosquitto_lib_init" libmosquitto dlsym abort" Not found" mkfunc mqtt-init \ Returns 0
-0 2 s" mosquitto_message_callback_set" libmosquitto dlsym abort" Not found" mkfunc mqtt-msg-callback-set \ Returns 0
+0 2 s" mosquitto_message_callback_set" libmosquitto dlsym abort" Not found" mkfunc mqtt-msg-callback-set 
 1 4 s" mosquitto_subscribe"  libmosquitto dlsym abort" Not found" mkfunc mqtt-sub 
 1 3 s" mosquitto_loop"       libmosquitto dlsym abort" Not found" mkfunc mqtt-loop 
+1 7 s" mosquitto_publish"    libmosquitto dlsym abort" Not found" mkfunc mqtt-pub 
 
 /buffer allocate abort" Allocate failed" to buffer
 buffer /buffer erase
 
- s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
+s" messageCallback" libhelper dlsym abort" Not found" constant msg-callback
 
 : test
     mqtt-init drop
@@ -56,11 +54,29 @@ buffer /buffer erase
     client 500 1 mqtt-loop 
 ;
 
+: test-pub
+    client 0 s" /home/outside/BackFloodlight/cmnd/power" drop
+    s" ON" swap 0 1 mqtt-pub
+;
+
+
 : .msg
     buffer msg-flag w@ . cr
     buffer topic   64 type cr
     buffer payload 32 type cr
 ;
 
+
+: run
+    begin 
+        client 500 1 mqtt-loop
+        0=
+    while
+        buffer msg-flag w@ if
+            .msg
+            0 buffer msg-flag w!
+        then
+    repeat
+;
 
 

@@ -452,7 +452,7 @@ static void athDlOpen(ficlVm * vm) {
     }    
 }
 
-#define MAX_ARGS 5
+#define MAX_ARGS 7
 // Note the arguments are in reverse order to the C function.
 // i.e:
 // void func(a,b,c)
@@ -502,6 +502,12 @@ static void athDlExec(ficlVm * vm) {
                     break;
                 case 5:
                     res=(*func)(args[4],args[3],args[2],args[1],args[0]);
+                    break;
+                case 6:
+                    res=(*func)(args[5],args[4],args[3],args[2],args[1],args[0]);
+                    break;
+                case 7:
+                    res=(*func)(args[6],args[5],args[4],args[3],args[2],args[1],args[0]);
                     break;
                 default:
                     printf("Too many args\n");
