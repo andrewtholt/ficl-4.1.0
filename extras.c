@@ -587,7 +587,7 @@ static void athDlSym(ficlVm * vm) {
 
 }
 //
-// Stack: env_name len buffer --
+// Stack: buffer env_name len  --
 //
 static void athGetenv(ficlVm * vm) {
     char           *ptr;
