@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <unistd.h>
 
-// #include <linux/limits.h>
-
 #include "utils.h"
 
 int expandPath(char *dirList, char *fileName, char *buffer) {
@@ -14,15 +12,14 @@ int expandPath(char *dirList, char *fileName, char *buffer) {
 
     char tmpSpace[4096];
 
-    char *scratch;
-
     int len=strlen(dirList);
 
     if( len == 0) {
         return rc;
     }
 
-    scratch=(char *)malloc( len );
+    char scratch[len];
+
     strcpy(scratch, dirList); 
 
     ptr = strtok( scratch, ":");
@@ -40,10 +37,6 @@ int expandPath(char *dirList, char *fileName, char *buffer) {
             ptr = strtok( NULL, ":");
         }
     } while(ptr != NULL);
-
-    if( scratch != NULL) {
-        free(scratch);
-    }
 
     return rc;
 }

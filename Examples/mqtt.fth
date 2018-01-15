@@ -18,8 +18,10 @@ endstruct msg
 
 : init
     init-run 0= if
-        s" /usr/lib/x86_64-linux-gnu/libmosquitto.so.1" dlopen abort" What." to libmosquitto
-        s" /usr/local/lib/libmqttcallback.so" dlopen abort" What."  to libhelper
+\        s" /usr/lib/x86_64-linux-gnu/libmosquitto.so.1" dlopen abort" What." to libmosquitto
+        s" libmosquitto.so.1" dlopen abort" What." to libmosquitto
+\        s" /usr/local/lib/libmqttcallback.so" dlopen abort" What."  to libhelper
+        s" libmqttcallback.so" dlopen abort" What."  to libhelper
 
         -1 to init-run
     then
