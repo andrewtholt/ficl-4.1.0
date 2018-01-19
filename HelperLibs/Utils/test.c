@@ -23,7 +23,7 @@ int main() {
         printf("%s\n", buffer);
     }
     
-    memDump(path,1024);
+    memDump(path,128);
 
 }
 
