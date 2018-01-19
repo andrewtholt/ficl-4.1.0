@@ -9,13 +9,18 @@ INSTALL="NO"
 if [ $# -gt 0 ]; then
     if [  "$1" == "install" ]; then
         INSTALL="YES"
-        echo "Install after build"
+        tput bold
+        echo "Perform Install after build"
+        tput sgr0
     fi
 fi
 
 for N in $LIST; do
     if [ -d $N ]; then
+        tput bold
         echo "Entering directory $N"
+        tput sgr0
+
         cd $N
         make
         if [ $INSTALL == "YES" ]; then
