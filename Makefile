@@ -63,3 +63,8 @@ clean:
 
 install:	ficl
 	./install.sh
+
+uninstall:
+	./uninstall.sh
+
+
