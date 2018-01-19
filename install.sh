@@ -26,6 +26,11 @@ if [ -f "libficl.so.4.1.0" ]; then
     cd $HERE
 fi
 
+if [ -d "HelperLibs" ]; then
+    cd HelperLibs
+    ./build.sh install
+fi
+
 if [ -d "./Lib" ]; then
     echo "Copying forth common function."
     FICL_LIB="/usr/local/lib/ficl"
