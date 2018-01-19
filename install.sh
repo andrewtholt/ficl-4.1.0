@@ -12,12 +12,14 @@ if [ ! -d "/usr/local/bin" ]; then
 fi
 
 tput bold
+echo
 echo "Move ficl"
 tput sgr0
 
 sudo mv ./ficl /usr/local/bin
 
 if [ -f "libficl.so.4.1.0" ]; then
+    echo
     tput bold
     echo "Setup shared library and links."
     tput sgr0
@@ -33,6 +35,7 @@ if [ -f "libficl.so.4.1.0" ]; then
 fi
 
 if [ -d "HelperLibs" ]; then
+    echo
     tput bold
     echo "Install Helper libs"
     tput sgr0
@@ -44,6 +47,7 @@ fi
 cd $HERE
 
 if [ -d "./Lib" ]; then
+    echo
     tput bold
     echo "Copying forth common function."
     tput sgr0
