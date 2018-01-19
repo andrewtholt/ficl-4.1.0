@@ -22,5 +22,8 @@ int main() {
     if( rc == 0) {
         printf("%s\n", buffer);
     }
+    
+    memDump(path,1024);
+
 }
 

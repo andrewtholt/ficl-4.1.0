@@ -9,7 +9,7 @@ load dynamic.fth
 s" /usr/local/lib/libutils.so" dlopen abort" failed" to libutils
 
 1 3 s" expandPath" libutils dlsym abort" Not Found" mkfunc expand-path
-
+0 2 s" memDump"    libutils dlsym abort" Not Found" mkfunc dump
 
 1024 mk-buffer drop value location
 1024 mk-buffer drop value path-list
