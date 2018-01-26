@@ -1,7 +1,15 @@
 
-load dynamic.fth
-load mqtt.fth
-load utils.fth
+s" dynamic.fth" sfind nip 0= [if]
+    load dynamic.fth
+[then]
+
+s" mqtt.fth" sfind nip 0= [if]
+    load mqtt.fth
+[then]
+
+s" utils.fth" sfind nip 0= [if]
+    load utils.fth
+[then]
 
 : setup
 \    mqtt-init drop
