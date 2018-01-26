@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ ! -f libutils.so ]; then
+    make
+fi
+
 echo "Moving libutils.so"
 sudo mv libutils.so /usr/local/lib
 sudo ldconfig

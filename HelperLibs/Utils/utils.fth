@@ -1,5 +1,7 @@
 
+s" dynamic.fth" sfind 0= [if]
 load dynamic.fth
+[then]
 
 -1 value libutils
 -1 value libc
