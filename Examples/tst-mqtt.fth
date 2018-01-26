@@ -3,7 +3,7 @@ load dynamic.fth
 load mqtt.fth
 
 : setup
-    mqtt-init drop
+\    mqtt-init drop
 
     s" FICL" drop 1 mqtt-buffer mqtt-new ?dup 0= abort" new failed." to client
     client s" 192.168.0.65" drop port 10 mqtt-client abort" client failed."
@@ -20,9 +20,9 @@ load mqtt.fth
 ;
 
 : .msg
-    mqtt-buffer msg-flag w@ . cr
-    mqtt-buffer topic   64 type cr
-    mqtt-buffer payload 32 type cr
+    mqtt-buffer msg-flag drop w@ . cr
+    mqtt-buffer topic   type cr
+    mqtt-buffer payload type cr
 ;
 
 0 value proliant_power
@@ -62,14 +62,14 @@ load mqtt.fth
         client 500 1 mqtt-loop
         0=
     while
-        mqtt-buffer msg-flag w@ if
+        mqtt-buffer msg-flag drop w@ if
             .msg
-            mqtt-buffer payload dup strlen
-            mqtt-buffer topic dup strlen evaluate
+            mqtt-buffer payload drop dup strlen 
+            mqtt-buffer topic drop dup strlen evaluate
 
             proliant_power . cr
-            logic
-            0 mqtt-buffer msg-flag w!
+            logic drop
+            0 mqtt-buffer msg-flag drop w!
         then
     repeat
 ;
