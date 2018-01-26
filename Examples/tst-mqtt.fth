@@ -1,6 +1,7 @@
 
 load dynamic.fth
 load mqtt.fth
+load utils.fth
 
 : setup
 \    mqtt-init drop
@@ -58,10 +59,12 @@ load mqtt.fth
 
 : run
     setup
+    client mqtt-loop-start abort" Loop start, failed."
     begin 
-        client 500 1 mqtt-loop
-        0=
-    while
+        ." round and ..." depth . cr
+        500 ms
+
+
         mqtt-buffer msg-flag drop w@ if
             .msg
             mqtt-buffer payload drop dup strlen 
@@ -71,7 +74,6 @@ load mqtt.fth
             logic drop
             0 mqtt-buffer msg-flag drop w!
         then
-    repeat
+    again
 ;
-
 
