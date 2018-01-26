@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ ! -f libmqttcallback.so ]; then 
+    make
+fi
+
 echo "Moving libmqttcallback.so"
 sudo mv libmqttcallback.so /usr/local/lib/
 sudo ldconfig

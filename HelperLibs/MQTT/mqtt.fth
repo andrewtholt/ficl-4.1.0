@@ -1,5 +1,7 @@
 
-load dynamic.fth
+s" dynamic.fth" sfind nip 0= [if]
+    load dynamic.fth
+[then]
 
 0 value init-run
 -1 value libmosquitto
