@@ -1,6 +1,6 @@
 
-s" dynamic.fth" sfind 0= [if]
-load dynamic.fth
+s" dynamic.fth" sfind nip 0= [if]
+    load dynamic.fth
 [then]
 
 -1 value libutils
