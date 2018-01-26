@@ -32,6 +32,7 @@ mqtt-init
 1 4 s" mosquitto_connect"  libmosquitto dlsym abort" Not found" mkfunc mqtt-client 
 1 0 s" mosquitto_lib_init" libmosquitto dlsym abort" Not found" mkfunc mqtt-init \ Returns 0
 0 2 s" mosquitto_message_callback_set" libmosquitto dlsym abort" Not found" mkfunc mqtt-msg-callback-set 
+1 1 s" mosquitto_loop_start"  libmosquitto dlsym abort" Not found" mkfunc mqtt-loop-start
 1 3 s" mosquitto_loop"       libmosquitto dlsym abort" Not found" mkfunc mqtt-loop 
 1 4 s" mosquitto_subscribe"  libmosquitto dlsym abort" Not found" mkfunc (mqtt-sub)
 1 7 s" mosquitto_publish"    libmosquitto dlsym abort" Not found" mkfunc (mqtt-pub)
