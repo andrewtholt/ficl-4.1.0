@@ -174,9 +174,11 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
     vm->sourceId.p = (void *) f;
 
     scratch = basename( buffer );
+    char xfer[255];
+    strcpy(xfer, scratch);
 
     ficlString fName = { 0 };
-    FICL_STRING_SET_FROM_CSTRING(fName, scratch);
+    FICL_STRING_SET_FROM_CSTRING(fName, xfer);
     ficlWord *wPtr = ficlDictionaryLookup(ficlVmGetDictionary(vm), fName);
 
     if( wPtr == NULL) {
