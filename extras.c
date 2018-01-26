@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <libgen.h>
 
 #include <errno.h>
 
@@ -156,6 +157,7 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
         ficlVmThrow(vm, FICL_VM_STATUS_QUIT);
     } else {
         strcpy(fullName, scratch);
+        strcpy(buffer, scratch);
     }
     /*
      *      ** get the file's size and make sure it exists
@@ -171,9 +173,25 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
     oldSourceId = vm->sourceId;
     vm->sourceId.p = (void *) f;
 
+    scratch = basename( buffer );
+
+    ficlString fName = { 0 };
+    FICL_STRING_SET_FROM_CSTRING(fName, scratch);
+    ficlWord *wPtr = ficlDictionaryLookup(ficlVmGetDictionary(vm), fName);
+
+    if( wPtr == NULL) {
+        sprintf( buffer, "-1 constant %s", fName.text);
+        result = ficlVmEvaluate(vm, buffer);
+        memset(buffer,0,sizeof(buffer));
+    } else {
+        printf("%s already loaded\n", fName.text);
+        fclose(f);
+        return;
+    }
+
     /* feed each line to ficlExec */
     while (fgets(buffer, BUFFER_SIZE, f)) {
-        int             length = strlen(buffer) - 1;
+        int length = strlen(buffer) - 1;
 
         line++;
         if (length <= 0)
@@ -221,15 +239,8 @@ static void ficlPrimitiveLoad(ficlVm * vm) {
 
     char            filename[BUFFER_SIZE];
 
-
-
     extern char    *loadPath;
     char           *name;
-
-
-
-
-
 
     ficlCountedString *counted = (ficlCountedString *) filename;
     ficlVmGetString(vm, counted, '\n');

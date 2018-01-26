@@ -4,6 +4,7 @@ ficl
 
 *.a
 *.so
+*.swp
 cscope.out
 .gdb_history
 main
