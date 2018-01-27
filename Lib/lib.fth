@@ -220,3 +220,13 @@ create (newline) 1 c, 10 c,
 
 : char 1 chars ;
 
+\ Empty stack.
+\ 
+: clear 
+    depth 0 do 
+        drop 
+    loop 
+;
+
+
+
