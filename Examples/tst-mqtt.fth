@@ -21,7 +21,7 @@ s" utils.fth" sfind nip 0= [if]
     s" /home/office/proliant/power" mqtt-sub drop
     s" /home/environment/day" mqtt-sub drop
 
-\    client 500 1 mqtt-loop 
+    client mqtt-loop-start abort" Loop start, failed."
 ;
 
 : test-pub
@@ -67,9 +67,8 @@ s" utils.fth" sfind nip 0= [if]
 
 : run
     setup
-    client mqtt-loop-start abort" Loop start, failed."
     begin 
-        ." round and ..." depth . cr
+\        ." round and ..." depth . cr
         500 ms
 
 
@@ -78,6 +77,7 @@ s" utils.fth" sfind nip 0= [if]
             mqtt-buffer payload drop dup strlen 
             mqtt-buffer topic drop dup strlen evaluate
 
+            ." proliant power "
             proliant_power . cr
             logic drop
             0 mqtt-buffer msg-flag drop w!
