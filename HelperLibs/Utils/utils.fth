@@ -12,10 +12,11 @@ s" dynamic.fth" sfind nip 0= [if]
 s" /usr/local/lib/libutils.so" dlopen abort" failed" to libutils
 s" libc.so.6"                  dlopen abort" failed" to libc
 
-1 3 s" expandPath" libutils dlsym abort" Not Found" mkfunc expand-path
-0 2 s" memDump"    libutils dlsym abort" Not Found" mkfunc dump
+1 3 s" expandPath"  libutils dlsym abort" Not Found" mkfunc expand-path
+0 2 s" memDump"     libutils dlsym abort" Not Found" mkfunc dump
 
-1 1 s" usleep"     libc     dlsym abort" Not Found" mkfunc (usleep)
+1 1 s" usleep"      libc     dlsym abort" Not Found" mkfunc (usleep)
+1 0 s" sched_yield" libc     dlsym abort" Not Found" mkfunc (yield)
 
 1024 mk-buffer drop value location
 1024 mk-buffer drop value path-list
@@ -26,6 +27,10 @@ s" libc.so.6"                  dlopen abort" failed" to libc
 
 : ms ( ms -- ) 
     1000 * us
+;
+
+: yield
+    (yield) drop
 ;
 
 \ : test
