@@ -8,3 +8,8 @@ ficl
 cscope.out
 .gdb_history
 main
+
+.cproject
+.fred
+.project
+.settings
