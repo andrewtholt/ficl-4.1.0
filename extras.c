@@ -466,6 +466,7 @@ static void athDlOpen(ficlVm * vm) {
 }
 
 #define MAX_ARGS 7
+// TODO Is this still true ?
 // Note the arguments are in reverse order to the C function.
 // i.e:
 // void func(a,b,c)
