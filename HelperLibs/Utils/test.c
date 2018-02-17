@@ -25,5 +25,21 @@ int main() {
     
     memDump(path,128);
 
+    printf("Terminal IO\n");
+
+    printf("Press a key .\n");
+
+
+    rc=0;
+    do {
+        rc=athQkey();
+    } while(rc == 0);
+
+    char k;
+
+    k= athGetKey();
+
+    printf("And the key was %c\n", k);
+
 }
 

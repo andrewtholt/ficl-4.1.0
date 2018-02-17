@@ -9,7 +9,8 @@ s" dynamic.fth" sfind nip 0= [if]
 \ int expandPath(char *dirList, char *fileName, char *buffer);
 
 
-s" /usr/local/lib/libutils.so" dlopen abort" failed" to libutils
+\ s" /usr/local/lib/libutils.so" dlopen abort" failed" to libutils
+s" libutils.so" dlopen abort" failed" to libutils
 s" libc.so.6"                  dlopen abort" failed" to libc
 
 1 3 s" expandPath"  libutils dlsym abort" Not Found" mkfunc expand-path
@@ -17,6 +18,9 @@ s" libc.so.6"                  dlopen abort" failed" to libc
 
 1 1 s" usleep"      libc     dlsym abort" Not Found" mkfunc (usleep)
 1 0 s" sched_yield" libc     dlsym abort" Not Found" mkfunc (yield)
+
+1 0 s" athQkey"     libutils dlsym abort" Not Found" mkfunc ?key
+1 0 s" athGetKey"   libutils dlsym abort" Not Found" mkfunc key
 
 1024 mk-buffer drop value location
 1024 mk-buffer drop value path-list
