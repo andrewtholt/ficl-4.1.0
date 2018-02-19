@@ -14,7 +14,8 @@ struct cbMqttMessage {
 uint32_t sizeOfMessage() {
     return ( sizeof( struct cbMqttMessage ));
 }
-
+// 
+// TODO Do I need some sort of queuing mechanism ?
 void messageCallback(struct mosquitto *mosq, void *obj,const struct mosquitto_message *message) { 
 //    printf("messageCallback\n");
 
@@ -28,6 +29,7 @@ void messageCallback(struct mosquitto *mosq, void *obj,const struct mosquitto_me
 // 
 // Use this to set up message callback.
 //
-void init() {
+void init(struct mosquitto *mosq) {
+    mosquitto_message_callback_set(mosq, messageCallback);
 }
 
