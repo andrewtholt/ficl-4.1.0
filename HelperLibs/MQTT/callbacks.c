@@ -25,4 +25,9 @@ void messageCallback(struct mosquitto *mosq, void *obj,const struct mosquitto_me
 
 }
 
+// 
+// Use this to set up message callback.
+//
+void init() {
+}
 
