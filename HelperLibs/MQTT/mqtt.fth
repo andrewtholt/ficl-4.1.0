@@ -29,6 +29,7 @@ endstruct /mqtt-msg
 
 mqtt-init
 1 0 s" sizeOfMessage" libhelper dlsym abort" Not found" mkfunc /mqtt-buffer
+0 1 s" init"          libhelper dlsym abort" Not found" mkfunc mqtt-init
 
 1 3 s" mosquitto_new"      libmosquitto dlsym abort" Not found" mkfunc mqtt-new 
 1 4 s" mosquitto_connect"  libmosquitto dlsym abort" Not found" mkfunc mqtt-client 
@@ -38,6 +39,7 @@ mqtt-init
 1 3 s" mosquitto_loop"       libmosquitto dlsym abort" Not found" mkfunc mqtt-loop 
 1 4 s" mosquitto_subscribe"  libmosquitto dlsym abort" Not found" mkfunc (mqtt-sub)
 1 7 s" mosquitto_publish"    libmosquitto dlsym abort" Not found" mkfunc (mqtt-pub)
+
 
 /mqtt-buffer allocate abort" Allocate failed" to mqtt-buffer
 mqtt-buffer /mqtt-buffer erase
