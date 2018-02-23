@@ -1,6 +1,6 @@
 
 libmqttcallback.so:	callbacks.o
-	gcc -g -shared -Wl,-soname,libmqttcallback.so -o libmqttcallback.so callbacks.o -lc
+	gcc -g -shared -Wl,-soname,libmqttcallback.so -o libmqttcallback.so callbacks.o -lc -lmosquitto
 
 
 callbacks.o:	callbacks.c
