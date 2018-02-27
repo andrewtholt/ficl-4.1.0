@@ -12,7 +12,7 @@ s" dynamic.fth" sfind nip 0= [if]
 -1 value mqtt-buffer
 
 struct
-     2 chars  field msg-flag
+     2 chars field msg-flag
     64 chars field topic
     32 chars field payload
 endstruct /mqtt-msg    
