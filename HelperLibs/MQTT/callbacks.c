@@ -28,8 +28,12 @@ void messageCallback(struct mosquitto *mosq, void *obj,const struct mosquitto_me
 
 // 
 // Use this to set up message callback.
+// TODO Modify this to pass in a third parameter.
+// This would select one of a number of callbacks.
+// default behaviour is to fill out the cbMqttMessage structure.
 //
 void init(struct mosquitto *mosq) {
+    printf("MQTT init run.\n");
     mosquitto_message_callback_set(mosq, messageCallback);
 }
 

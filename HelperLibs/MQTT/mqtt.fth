@@ -12,7 +12,7 @@ s" dynamic.fth" sfind nip 0= [if]
 -1 value mqtt-buffer
 
 struct
-     2 chars  field msg-flag
+     2 chars field msg-flag
     64 chars field topic
     32 chars field payload
 endstruct /mqtt-msg    
@@ -29,7 +29,8 @@ endstruct /mqtt-msg
 
 mqtt-init
 1 0 s" sizeOfMessage" libhelper dlsym abort" Not found" mkfunc /mqtt-buffer
-0 1 s" init"          libhelper dlsym abort" Not found" mkfunc mqtt-init
+
+0 1 s" init"          libhelper dlsym abort" Not found" mkfunc callback-init
 
 1 3 s" mosquitto_new"      libmosquitto dlsym abort" Not found" mkfunc mqtt-new 
 1 4 s" mosquitto_connect"  libmosquitto dlsym abort" Not found" mkfunc mqtt-client 
