@@ -264,3 +264,13 @@ void memDump(uint8_t *address, int length) {
     }
 }
 
+bool strToBool( char *msg ) {
+    bool res=false;
+    res = (bool)(strncmp(msg,"YES",3) == 0) || (strncmp(msg,"ON",2)) == 0 || (strncmp(msg,"TRUE",4) == 0);
+
+    return res;
+}
+
+
+
+

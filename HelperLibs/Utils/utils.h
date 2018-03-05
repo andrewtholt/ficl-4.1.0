@@ -32,3 +32,5 @@ char athGetKey() ;
  */
 void fatal(char *message) ;
 char keystroke(int t) ;
+
+bool strToBool( char *msg );
