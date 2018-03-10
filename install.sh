@@ -32,6 +32,12 @@ if [ -f "libficl.so.4.1.0" ]; then
     sudo ldconfig
 
     cd $HERE
+
+    sudo cp ./ficl.h /usr/local/include
+    sudo cp ./ficllocal.h /usr/local/include
+    sudo cp ./ficltokens.h /usr/local/include
+    sudo mkdir /usr/local/include/ficlplatform
+    sudo cp ./ficlplatform/*.h  /usr/local/include/ficlplatform
 fi
 
 if [ -d "HelperLibs" ]; then
