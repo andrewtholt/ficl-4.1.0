@@ -12,7 +12,7 @@ LIB = ar cr
 RANLIB = ranlib
 
 MAJOR = 4
-MINOR = 1.0
+MINOR = 2.0
 
 all:	ficl ficl++
 
