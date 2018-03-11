@@ -6,22 +6,22 @@ extern "C" {
 
     void ficlTimerCallback(void *fred[]) {
         ficlVm *vm;
-        ficlWord *xt;
+        char *cmd;
 
         printf("===============\n");
         printf("Callback called\n");
         printf("===============\n");
 
         printf("vm %0x\n", fred[0]);
-        printf("xt %0x\n", fred[1]);
+        printf("cmd %s\n", fred[1]);
 
         vm = (ficlVm *) fred[0];
-        xt = (ficlWord *)fred[1];
+        cmd = (char *)fred[1];
 
 
 //        ficlStackPushPointer(vm->dataStack,xt);
 //        ficlVmExecuteWord(vm,xt);
-        ficlVmEvaluate(vm,(char *)".( It worked) cr");
+        ficlVmEvaluate(vm,cmd);
     }
 
     struct timerMaster *newTimerMaster() {
