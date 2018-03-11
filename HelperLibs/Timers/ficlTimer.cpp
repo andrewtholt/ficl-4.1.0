@@ -1,36 +1,65 @@
 
 #include "ficlTimer.h"
 
-ficlTimer::ficlTimer(int interval) {
-//   myTimer(interval);
-    myTimer::set(interval);
-}
+extern "C" {
+    struct timerMaster *newTimerMaster() {
+        struct timerMaster *boss;
 
-void ficlTimer::display() {
-    myTimer::display();
-}
+        boss = new timerMaster();
 
-void ficlTimer::ficlSetup(ficlVm *v, ficlWord *x) {
-    vm=v;
-    xt=x;
+        return boss;
+    }
 
-    setCallback(NULL);
-}
+    int addTimer(struct timerMaster *boss, int interval) {
+        int idx=-1;
 
-struct ficlTimer *newFiclTimer(int interval) {
-    struct ficlTimer *res;
+        idx = boss->addTimer(interval);
 
-    res = new ficlTimer( interval );
+        return idx;
+    }
 
-    return res;
-}
+    bool startTimer(struct timerMaster *boss, int idx) {
+        bool flag=true;
 
-void ficlSetup(struct ficlTimer *inst, ficlVm *v, ficlWord *x) {
+        flag=boss->startTimer(idx);
 
-    inst->ficlSetup(v, x);
-}
+        return flag;
+    }
 
-void display(struct ficlTimer *inst) {
-    inst->display();
+    bool stopTimer(struct timerMaster *boss, int idx) {
+        bool flag=true;
+
+        flag=boss->stopTimer(idx);
+
+        return flag;
+    }
+
+    bool resetTimer(struct timerMaster *boss, int idx) {
+        bool flag=true;
+
+        flag=boss->resetTimer(idx);
+
+        return flag;
+    }
+
+    int nextTimer(struct timerMaster *boss) {
+        int n;
+
+        n = boss->nextTimer();
+        return n;
+    }
+
+    void updateTimers(struct timerMaster *boss, int interval) {
+        boss->updateTimers(interval);
+    }
+
+    void setCallback(struct timerMaster *boss, int idx, void (*callback)()) {
+        boss->setCallback(idx, callback);
+    }
+
+    void display(struct timerMaster *boss) {
+
+        boss->display();
+    }
 }
 
