@@ -1,4 +1,5 @@
 #include "ficlTimer.h"
+#include <stdint.h>
 
 char *printBool(bool v) {
     if(v) {
@@ -8,9 +9,11 @@ char *printBool(bool v) {
     }
 }
 
-void fred() {
+void fred(void **p) {
     printf("============\n");
     printf("Callback run\n");
+    printf("p[0]=%d\n",(int64_t)p[0]);
+    printf("p[1]=%d\n",(int64_t)p[1]);
     printf("============\n");
 }
 
@@ -20,6 +23,7 @@ int main() {
     int idx=-1;
     bool flag;
     int v=0;
+    void *p[2];
 
     timerMaster *tst;
 
@@ -32,6 +36,10 @@ int main() {
     printf("Set callback\n");
 
     setCallback(tst,idx,fred);
+    p[0] = (void *)4;
+    p[1] = (void *)5;
+    
+    setCallbackParameters(tst,idx,p);
 
     printf("Start Timer returned:%s \n\n", printBool(flag));
 

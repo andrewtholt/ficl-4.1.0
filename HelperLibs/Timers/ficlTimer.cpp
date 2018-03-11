@@ -53,8 +53,13 @@ extern "C" {
         boss->updateTimers(interval);
     }
 
-    void setCallback(struct timerMaster *boss, int idx, void (*callback)()) {
+    void setCallback(struct timerMaster *boss, int idx, void (*callback)(void **p)) {
         boss->setCallback(idx, callback);
+    }
+    
+    void setCallbackParameters(struct timerMaster *boss, int idx, void **p){
+        boss->setCallbackParameters(idx, p);
+        
     }
 
     void display(struct timerMaster *boss) {
