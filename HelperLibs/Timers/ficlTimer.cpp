@@ -1,7 +1,29 @@
 
 #include "ficlTimer.h"
+#include "ficl.h"
 
 extern "C" {
+
+    void ficlTimerCallback(void *fred[]) {
+        ficlVm *vm;
+        ficlWord *xt;
+
+        printf("===============\n");
+        printf("Callback called\n");
+        printf("===============\n");
+
+        printf("vm %0x\n", fred[0]);
+        printf("xt %0x\n", fred[1]);
+
+        vm = (ficlVm *) fred[0];
+        xt = (ficlWord *)fred[1];
+
+
+//        ficlStackPushPointer(vm->dataStack,xt);
+//        ficlVmExecuteWord(vm,xt);
+        ficlVmEvaluate(vm,(char *)".( It worked) cr");
+    }
+
     struct timerMaster *newTimerMaster() {
         struct timerMaster *boss;
 
@@ -49,15 +71,25 @@ extern "C" {
         return n;
     }
 
+    void oneShot(struct timerMaster *boss, int idx, bool n) {
+        boss->oneShot(idx, n);
+    }
+
     void updateTimers(struct timerMaster *boss, int interval) {
         boss->updateTimers(interval);
     }
 
-    void setCallback(struct timerMaster *boss, int idx, void (*callback)(void **p)) {
-        boss->setCallback(idx, callback);
+//    void setCallback(struct timerMaster *boss, int idx, void (*callback)(void **p)) {
+    void setCallback(struct timerMaster *boss, int idx) {
+        (void)boss->stopTimer(idx);
+        boss->setCallback(idx, ficlTimerCallback);
     }
     
-    void setCallbackParameters(struct timerMaster *boss, int idx, void **p){
+    void setCallbackParameters(struct timerMaster *boss, int idx, void *vm, void *xt){
+        void *p[2];
+
+        p[0] = vm;
+        p[1] = xt ;
         boss->setCallbackParameters(idx, p);
         
     }

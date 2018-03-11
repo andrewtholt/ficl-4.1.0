@@ -23,7 +23,9 @@ int main() {
     int idx=-1;
     bool flag;
     int v=0;
-    void *p[2];
+
+    void *vm;
+    void *xt;
 
     timerMaster *tst;
 
@@ -35,11 +37,11 @@ int main() {
 
     printf("Set callback\n");
 
-    setCallback(tst,idx,fred);
-    p[0] = (void *)4;
-    p[1] = (void *)5;
+    setCallback(tst,idx);
+    vm = (void *)4;
+    xt = (void *)5;
     
-    setCallbackParameters(tst,idx,p);
+    setCallbackParameters(tst,idx,vm,xt);
 
     printf("Start Timer returned:%s \n\n", printBool(flag));
 
