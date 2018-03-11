@@ -643,6 +643,11 @@ static void athPerror(ficlVm * vm) {
         perror("ficl");
 }
 
+static void athGetVM(ficlVm *vm) {
+
+    ficlStackPushPointer(vm->dataStack, vm);
+}
+
 #endif
 
 void ficlSystemCompileExtras(ficlSystem *system)
@@ -659,6 +664,7 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, "dlerror", athDlError, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "dlexec", athDlExec, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"getenv", athGetenv, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"get-vm", athGetVM, FICL_WORD_DEFAULT);
 #endif
 
     ficlDictionarySetPrimitive(dictionary, "break",    ficlPrimitiveBreak,    FICL_WORD_DEFAULT);

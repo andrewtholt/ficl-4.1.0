@@ -14,9 +14,10 @@ RANLIB = ranlib
 MAJOR = 4
 MINOR = 2.0
 
-all:	ficl ficl++
+all:	ficl ficl++ lib
 
-ficl: main.o $(HEADERS) libficl.a
+# ficl: main.o $(HEADERS) libficl.a
+ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl
 
 lib: libficl.so.$(MAJOR).$(MINOR)
