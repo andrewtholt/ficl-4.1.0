@@ -12,14 +12,22 @@ LIB = ar cr
 RANLIB = ranlib
 
 MAJOR = 4
-MINOR = 1.0
+MINOR = 2.0
 
-all:	ficl
+all:	ficl ficl++ lib
 
-ficl: main.o $(HEADERS) libficl.a
+# ficl: main.o $(HEADERS) libficl.a
+ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl
 
 lib: libficl.so.$(MAJOR).$(MINOR)
+
+ficl++.o:   ficl++.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
+	g++ -g -c ficl++.cpp -o ficl++.o
+
+ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
+	g++ $(CFLAGS) ficl++.o -o ficl++ -L. -lficl -lm -ldl
+#	g++ $(CFLAGS) --static ficl++.o -o ficl++ -L. -lficl -lm -ldl
 
 # static library build
 libficl.a: $(OBJECTS)

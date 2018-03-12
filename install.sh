@@ -18,20 +18,28 @@ tput sgr0
 
 sudo mv ./ficl /usr/local/bin
 
-if [ -f "libficl.so.4.1.0" ]; then
+FICL_LIB="libficl.so.4.2.0"
+
+if [ -f $FICL_LIB ]; then
     echo
     tput bold
     echo "Setup shared library and links."
     tput sgr0
 
-    sudo rm -f /usr/local/lib/libficl.s0.*
-    sudo mv libficl.so.4.1.0 /usr/lib/lib
+    sudo rm -f /usr/local/lib/libficl.*
+    sudo mv $FICL_LIB /usr/local/lib
     cd /usr/local/lib
-    sudo ln -s libficl.so.4 libficl.so.4.1.0
-    sudo ln -s libficl.so libficl.so.4.1.0
+    sudo ln -s $FICL_LIB libficl.so.4 
+    sudo ln -s $FICL_LIB libficl.so
     sudo ldconfig
 
     cd $HERE
+
+    sudo cp ./ficl.h /usr/local/include
+    sudo cp ./ficllocal.h /usr/local/include
+    sudo cp ./ficltokens.h /usr/local/include
+    sudo mkdir /usr/local/include/ficlplatform
+    sudo cp ./ficlplatform/*.h  /usr/local/include/ficlplatform
 fi
 
 if [ -d "HelperLibs" ]; then

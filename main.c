@@ -97,7 +97,6 @@ int main(int argc, char **argv) {
     while ((ch = getopt(argc,argv, "c:qh?d:f:sV")) != -1) {
         switch(ch) {
             case 'c':
-//                cmd=(struct string *)strsave(optarg);
                 cmd=strsave(optarg);
                 printf("%s\n",(char *)cmd);
                 break;

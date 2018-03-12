@@ -13,3 +13,5 @@ main
 .fred
 .project
 .settings
+ficl++
+libficl.so.*
