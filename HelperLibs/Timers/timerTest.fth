@@ -38,7 +38,8 @@ s" timers.fth" sfind nip 0= [if]
     boss timer-display
 
     ." Set callback parameters" cr
-    boss idx get-vm call set-callback-parameters
+\    boss idx get-vm call set-callback-parameters
+    boss idx get-vm s" ficl-callback" drop set-callback-parameters
     boss timer-display
 
     ." Stop timer" cr
