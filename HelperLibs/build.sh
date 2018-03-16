@@ -22,9 +22,14 @@ for N in $LIST; do
         tput sgr0
 
         cd $N
-        make
-        if [ $INSTALL == "YES" ]; then
-            make install
+
+        if [ -f "Makefile" ]; then
+            make
+            if [ $INSTALL == "YES" ]; then
+                make install
+            fi
+        else
+            echo "No Makefile"
         fi
         cd $HERE
     fi
