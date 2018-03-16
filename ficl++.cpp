@@ -7,7 +7,7 @@ extern "C" {
 #include "ficl.h"
 #include "extras.h"
 
-    char *loadPath;
+    extern char *loadPath;
 }
 void usage() {
     printf("\nUsage: ficl <options> where options are: \n\n");
@@ -46,7 +46,7 @@ void ficlSystemCompileCpp(ficlSystem *system) {
 }
 
 int main() {
-    char *loadPath;
+//    char *loadPath;
     int returnValue = 0;
     char buffer[255];
 

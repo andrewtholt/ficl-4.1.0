@@ -43,7 +43,7 @@
 #include "ficl.h"
 #include "extras.h"
 
-char *loadPath;
+extern char *loadPath;
 
 void usage() {
     printf("\nUsage: ficl <options> where options are: \n\n");
