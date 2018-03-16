@@ -15,3 +15,5 @@ main
 .settings
 ficl++
 libficl.so.*
+ficls
+makesoftcore
