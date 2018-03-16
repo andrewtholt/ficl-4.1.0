@@ -1,6 +1,8 @@
 
 s" timers.fth" sfind nip 0= [if]
+    .( Loading timers ... ) cr
     load timers.fth
+    .( ... done ) cr
 [then]
 
 0 value boss
