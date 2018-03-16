@@ -1,6 +1,6 @@
 include profile.mk
 
-OBJECTS= dictionary.o system.o fileaccess.o float.o double.o prefix.o search.o softcore.o stack.o tools.o vm.o primitives.o bit.o lzuncompress.o unix.o utility.o hash.o callback.o word.o extras.o libser.o
+OBJECTS= dictionary.o system.o fileaccess.o float.o double.o prefix.o search.o softcore.o stack.o tools.o vm.o primitives.o bit.o lzuncompress.o unix.o utility.o hash.o callback.o word.o extras.o 
 HEADERS= ficl.h ficlplatform/unix.h
 #
 # Flags for shared library
@@ -18,8 +18,8 @@ MINOR = 2.0
 
 all:	ficl ficl++ lib
 
-# ficl: main.o $(HEADERS) libficl.a
-ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
+ficl: main.o $(HEADERS) libficl.a
+# ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl
 
 lib: libficl.so.$(MAJOR).$(MINOR)
