@@ -21,12 +21,10 @@ for N in $LIST; do
         echo "Entering directory $N"
         tput sgr0
 
-        cd $N
-
-        if [ -f "Makefile" ]; then
-            make
+        if [ -f "${N}/Makefile" ]; then
+            make -C $N 
             if [ $INSTALL == "YES" ]; then
-                make install
+                make -C $N install
             fi
         else
             echo "No Makefile"
