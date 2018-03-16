@@ -2,7 +2,7 @@
 
 # set -x
 
-make
+./build.sh
 strip ./ficl
 
 HERE=$(pwd)
