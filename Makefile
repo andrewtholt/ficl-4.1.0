@@ -18,7 +18,7 @@ all:	ficl ficl++ lib
 
 # ficl: main.o $(HEADERS) libficl.a
 ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl
+	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lreadline
 
 lib: libficl.so.$(MAJOR).$(MINOR)
 
