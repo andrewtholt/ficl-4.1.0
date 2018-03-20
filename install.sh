@@ -2,7 +2,7 @@
 
 # set -x
 
-make
+./build.sh
 strip ./ficl
 
 HERE=$(pwd)
@@ -38,7 +38,7 @@ if [ -f $FICL_LIB ]; then
     sudo cp ./ficl.h /usr/local/include
     sudo cp ./ficllocal.h /usr/local/include
     sudo cp ./ficltokens.h /usr/local/include
-    sudo mkdir /usr/local/include/ficlplatform
+    sudo mkdir -p /usr/local/include/ficlplatform
     sudo cp ./ficlplatform/*.h  /usr/local/include/ficlplatform
 fi
 

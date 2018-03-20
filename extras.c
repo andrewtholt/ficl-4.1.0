@@ -14,6 +14,7 @@
 #include "extras.h"
 
 int verbose;
+char *loadPath;
 #ifndef FICL_ANSI
 
 /*

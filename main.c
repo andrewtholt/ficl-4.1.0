@@ -1,49 +1,55 @@
 /*
-** stub main for testing Ficl
-** $Id: main.c,v 1.2 2010/09/10 09:01:28 asau Exp $
-*/
+ ** stub main for testing Ficl
+ ** $Id: main.c,v 1.2 2010/09/10 09:01:28 asau Exp $
+ */
 /*
-** Copyright (c) 1997-2001 John Sadler (john_sadler@alum.mit.edu)
-** All rights reserved.
-**
-** Get the latest Ficl release at http://ficl.sourceforge.net
-**
-** I am interested in hearing from anyone who uses Ficl. If you have
-** a problem, a success story, a defect, an enhancement request, or
-** if you would like to contribute to the Ficl release, please
-** contact me by email at the address above.
-**
-** L I C E N S E  and  D I S C L A I M E R
-** 
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions
-** are met:
-** 1. Redistributions of source code must retain the above copyright
-**    notice, this list of conditions and the following disclaimer.
-** 2. Redistributions in binary form must reproduce the above copyright
-**    notice, this list of conditions and the following disclaimer in the
-**    documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
-** ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
-** FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-** DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-** OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-** HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-** SUCH DAMAGE.
-*/
+ ** Copyright (c) 1997-2001 John Sadler (john_sadler@alum.mit.edu)
+ ** All rights reserved.
+ **
+ ** Get the latest Ficl release at http://ficl.sourceforge.net
+ **
+ ** I am interested in hearing from anyone who uses Ficl. If you have
+ ** a problem, a success story, a defect, an enhancement request, or
+ ** if you would like to contribute to the Ficl release, please
+ ** contact me by email at the address above.
+ **
+ ** L I C E N S E  and  D I S C L A I M E R
+ ** 
+ ** Redistribution and use in source and binary forms, with or without
+ ** modification, are permitted provided that the following conditions
+ ** are met:
+ ** 1. Redistributions of source code must retain the above copyright
+ **    notice, this list of conditions and the following disclaimer.
+ ** 2. Redistributions in binary form must reproduce the above copyright
+ **    notice, this list of conditions and the following disclaimer in the
+ **    documentation and/or other materials provided with the distribution.
+ **
+ ** THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
+ ** ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ ** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ** ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
+ ** FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ ** DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ ** OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ ** HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ ** LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ ** OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ ** SUCH DAMAGE.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <stdint.h>
+
+#include <readline/readline.h>
+#include <readline/history.h>
 
 #include "ficl.h"
 #include "extras.h"
 
-char *loadPath;
+extern char *loadPath;
 
 void usage() {
     printf("\nUsage: ficl <options> where options are: \n\n");
@@ -73,6 +79,22 @@ void usage() {
 
 extern int verbose;
 
+void localCmds( char *ptr ) {
+    char *historyFile ;
+    char buffer[255];
+
+//    printf("Local >%s<\n",ptr); 
+
+    if(!strcmp( ptr, "save" )) {
+        historyFile = getenv("HOME");
+        strcpy(buffer, historyFile );
+        strcat(buffer, "/.ficl_history");
+
+        write_history( buffer );
+    } else if( !strcmp( ptr,"help")) {
+        fprintf(stderr,"Help\n");
+    }
+}
 
 int main(int argc, char **argv) {
     int returnValue = 0;
@@ -87,7 +109,7 @@ int main(int argc, char **argv) {
     loadPath = getenv("FICL_PATH");
 
     char *cmd=NULL;
-    
+
     ficlSystemInformation athFsi;
 
     memset(&athFsi,0,sizeof(struct ficlSystemInformation));
@@ -122,7 +144,24 @@ int main(int argc, char **argv) {
         }
     }
 
-//    system = ficlSystemCreate(NULL);
+    //    system = ficlSystemCreate(NULL);
+
+    bool useReadLine = false;
+    char *histFilename=NULL;
+
+    if( isatty(0) ==0 ) {
+        fprintf(stderr,"Not a tty\n");
+        useReadLine = false;
+    } else {
+        fprintf(stderr,"Is a tty\n");
+        useReadLine = true;
+        histFilename = getenv("HOME");
+        strcpy(buffer, histFilename );
+        strcat(buffer, "/.ficl_history");
+
+        read_history( buffer );
+    }
+
     system = ficlSystemCreate(&athFsi);
 
     ficlSystemCompileExtras(system);
@@ -160,10 +199,30 @@ int main(int argc, char **argv) {
     returnValue = ficlVmEvaluate(vm, buffer);
 #endif
 
+    char *buf;
+
     while (returnValue != FICL_VM_STATUS_USER_EXIT) {
-        fputs(FICL_PROMPT, stdout);
-        if (fgets(buffer, sizeof(buffer), stdin) == NULL) break;
-        returnValue = ficlVmEvaluate(vm, buffer);
+        if( useReadLine ) {
+            buf = readline(FICL_PROMPT);
+
+            if( buf[0] == '^' ) {
+                localCmds( &buf[1] );
+            } else {
+                returnValue = ficlVmEvaluate(vm, buf);
+            }
+
+            if (buf[0]!=0) {
+                add_history(buf);
+            }
+            free(buf);
+        } else {
+            fputs(FICL_PROMPT, stdout);
+            if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+                break;
+            }
+            returnValue = ficlVmEvaluate(vm, buffer);
+        }
+
     }
 
     ficlSystemDestroy(system);

@@ -1,6 +1,8 @@
 
 s" dynamic.fth" sfind nip 0= [if]
-      load dynamic.fth
+    .( loading dynamic.fth ... ) cr
+    load dynamic.fth
+    .( ... done ) cr
 [then]
 
 -1 value libtimers
