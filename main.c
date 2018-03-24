@@ -154,12 +154,14 @@ int main(int argc, char **argv) {
         useReadLine = false;
     } else {
         fprintf(stderr,"Is a tty\n");
+#ifndef NOREADLINE
         useReadLine = true;
         histFilename = getenv("HOME");
         strcpy(buffer, histFilename );
         strcat(buffer, "/.ficl_history");
 
         read_history( buffer );
+#endif
     }
 
     system = ficlSystemCreate(&athFsi);
