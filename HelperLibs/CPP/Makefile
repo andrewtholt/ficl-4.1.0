@@ -1,7 +1,7 @@
 CFLAGS=-g -fPIC
 CPP=g++
 
-all:	tst
+all:	tst libcpp.so
 
 tst:	tst.c cpp.o
 	$(CC) $(CFLAGS) tst.c cpp.o -o tst -lstdc++

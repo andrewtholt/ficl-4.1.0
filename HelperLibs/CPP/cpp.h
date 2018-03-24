@@ -11,6 +11,7 @@ class myVector {
         myVector(int size);
 
         void append(void *n);
+        void *get(int n);
         int size();
         void erase(int n);  // Erase a single entry
         void erase();		// kill 'em all

@@ -17,6 +17,10 @@ void myVector::append(void *n) {
     v->push_back(n);
 }
 
+void *myVector::get(int n){
+	return(v->at(n));
+}
+
 int myVector::size() {
     return v->size();
 }
@@ -57,6 +61,10 @@ extern "C" {
 
     void vectorAppend(struct myVector *p, void *n) {
         p->append(n);
+    }
+
+    void *vectorGet(struct myVector *p, int n) {
+        p->get(n);
     }
 
     void vectorErase(struct myVector *p, int n) {
