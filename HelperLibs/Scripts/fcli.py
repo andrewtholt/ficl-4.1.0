@@ -103,6 +103,7 @@ def main():
 
     readList = [sys.stdin]
     s=""
+    send=" "
 
     cmdFile = None
 
@@ -218,13 +219,13 @@ def main():
 
                         if mn in macros:
                             print("Found")
-                            cmd = macros[ mn ]
-                            send = (cmd.encode('ascii','ignore'))
+                            s = macros[ mn ]
                         else:
                             print("Don't understand " + s)
-                else:
-                    send = (s.encode('ascii','ignore'))
 
+                if s[0] != '^':
+                    send = (s.encode('ascii','ignore'))
+    
                     if p == None:
                         print("No instance selected")
                     else:
@@ -236,7 +237,7 @@ def main():
                                 print(p.before)
                             except:
                                 runFlag=False
-
+    
                         print(p.before)
 
 
