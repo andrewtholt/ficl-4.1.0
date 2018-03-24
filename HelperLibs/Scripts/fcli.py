@@ -85,7 +85,6 @@ def main():
         elif o in ("-p","--prompt"):
             prompt=a;
         elif o in ("-f","--file"):
-            print("HERE",a)
             fileName = a;
 
     histfile = os.path.join(os.path.expanduser("~"), ".fcli_history")
@@ -108,7 +107,8 @@ def main():
     cmdFile = None
 
     if fileName != None:
-        print("Load commands from " + fileName )
+        if verbose:
+            print("Load commands from " + fileName )
         try:
             cmdFile = open(fileName,'r')
             opos = 0
@@ -139,7 +139,6 @@ def main():
                 if cmd == "?" :
                     usage()
                 elif cmd[0] == '^':
-    
                     if cmd == "^ficl":
                         if len(localCmd) == 1:
                             ficlHelp()
@@ -171,6 +170,11 @@ def main():
                                 l=len(inst)
                                 print("%d programes running" % l)
 
+                    elif cmd == "^echo":
+                        out=""
+                        for n in localCmd[1:]:
+                            out = out + n + " "
+                        print(out)
                     elif cmd == "^save":
                         print("Save History")
                         readline.set_history_length(1000)
