@@ -15,6 +15,10 @@ class myVector {
         int size();
         void erase(int n);  // Erase a single entry
         void erase();		// kill 'em all
+        // TBD
+        void *getFirst(); // use front
+        void *getLast();	// use back
+        void *popLast();
 };
 
 class myMap {
@@ -25,6 +29,9 @@ public:
 	void add(std::string n, void *v);
     int size();
     void *get(std::string n);
+    bool exists(std::string n);
+    void eraseAll();
+    void erase(std::string n);
 };
 #endif
 
@@ -41,6 +48,9 @@ extern "C" {
     int mapSize(struct myMap *m);
     void mapAdd(struct myMap *m, char *n, void *v);
     void *mapGet(struct myMap *m, char *n);
+    bool mapExists(struct myMap *m, char *n);
+    void mapEraseAll(struct myMap *p);
+    void mapErase(struct myMap *m, char *n);
 #ifdef __cplusplus
 }
 #endif

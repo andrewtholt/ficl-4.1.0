@@ -34,4 +34,22 @@ int main() {
 
     printf("Map:Get entry 'Test', result is >%s<\n", res);
 
+    bool rc = mapExists(m,"Test");
+
+    printf("Map:Entry 'Test' exists, result is >%d<\n", rc);
+
+    printf("Map:Erase All\n");
+    mapEraseAll(  m);
+
+    printf("Map:Size is %d\n", mapSize(m));
+
+    mapAdd(m,"Testing 1",(void *)1);
+    mapAdd(m,"Testing 2",(void *)2);
+    mapAdd(m,"Testing 3",(void *)3);
+
+    printf("Map:Erase 'Testing'\n");
+    printf("Map:Before Size is %d\n", mapSize(m));
+    mapErase( m, "Testing 2");
+    printf("Map:After  Size is %d\n", mapSize(m));
+
 }

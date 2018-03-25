@@ -47,7 +47,29 @@ int myMap::size() {
 
 void *myMap::get(std::string n){
 	return(m->at(n));
+}
 
+bool myMap::exists(std::string n) {
+	bool rc=false;
+	if( m->count(n) == 0 ) {
+		rc = false;
+	} else {
+		rc = true;
+	}
+	return rc;
+}
+
+void myMap::eraseAll() {
+	m->clear();
+}
+
+void myMap::erase(std::string n) {
+	std::map<std::string, void *>::iterator it;
+
+	it=m->find(n);
+	if( it !=m->end() ) {
+		m->erase(it);
+	}
 }
 
 extern "C" {
@@ -90,5 +112,19 @@ extern "C" {
     int mapSize(myMap *m) {
         return(m->size());
     }
+
+    bool mapExists(struct myMap *m, char *n) {
+    	return(m->exists(n));
+    }
+
+    void mapEraseAll(struct myMap *m) {
+    	m->eraseAll();
+    }
+
+    void mapErase(struct myMap *m, char *n) {
+    	m->erase(n);
+    }
+
+
 
 }
