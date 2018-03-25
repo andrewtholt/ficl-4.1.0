@@ -108,6 +108,10 @@ int main(int argc, char **argv) {
     char *fileName=(char *)NULL;
     loadPath = getenv("FICL_PATH");
 
+    if(loadPath == NULL ) {
+        loadPath = strsave("/usr/local/lib/ficl:.");
+    }
+
     char *cmd=NULL;
 
     ficlSystemInformation athFsi;
@@ -145,6 +149,18 @@ int main(int argc, char **argv) {
     }
 
     //    system = ficlSystemCreate(NULL);
+
+    if( fileName == NULL ) {
+        char tmpBuffer[255];
+        char *home;
+
+        home=getenv("HOME");
+        sprintf(tmpBuffer,"%s/.ficlrc.fth",home);
+
+        if ( access(tmpBuffer, R_OK) == 0) {
+            fileName=strsave(tmpBuffer);
+        }
+    }
 
     bool useReadLine = false;
     char histFilename[255];
