@@ -147,7 +147,8 @@ int main(int argc, char **argv) {
     //    system = ficlSystemCreate(NULL);
 
     bool useReadLine = false;
-    char *histFilename=NULL;
+    char histFilename[255];
+    memset(histFilename,0,255);
 
     if( isatty(0) ==0 ) {
         fprintf(stderr,"Not a tty\n");
@@ -155,12 +156,13 @@ int main(int argc, char **argv) {
     } else {
         fprintf(stderr,"Is a tty\n");
 #ifndef NOREADLINE
+        char *tmp;
         useReadLine = true;
-        histFilename = getenv("HOME");
-        strcpy(buffer, histFilename );
-        strcat(buffer, "/.ficl_history");
+        tmp = getenv("HOME");
+        strcpy(histFilename, tmp );
+        strcat(histFilename, "/.ficl_history");
 
-        read_history( buffer );
+        read_history( histFilename );
 #endif
     }
 
@@ -227,6 +229,9 @@ int main(int argc, char **argv) {
 
     }
 
+    if(useReadLine) {
+        write_history( histFilename );
+    }
     ficlSystemDestroy(system);
     return 0;
 }
