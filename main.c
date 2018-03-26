@@ -108,6 +108,10 @@ int main(int argc, char **argv) {
     char *fileName=(char *)NULL;
     loadPath = getenv("FICL_PATH");
 
+    if(loadPath == NULL ) {
+        loadPath = strsave("/usr/local/lib/ficl:.");
+    }
+
     char *cmd=NULL;
 
     ficlSystemInformation athFsi;
@@ -146,20 +150,36 @@ int main(int argc, char **argv) {
 
     //    system = ficlSystemCreate(NULL);
 
+    if( fileName == NULL ) {
+        char tmpBuffer[255];
+        char *home;
+
+        home=getenv("HOME");
+        sprintf(tmpBuffer,"%s/.ficlrc.fth",home);
+
+        if ( access(tmpBuffer, R_OK) == 0) {
+            fileName=strsave(tmpBuffer);
+        }
+    }
+
     bool useReadLine = false;
-    char *histFilename=NULL;
+    char histFilename[255];
+    memset(histFilename,0,255);
 
     if( isatty(0) ==0 ) {
         fprintf(stderr,"Not a tty\n");
         useReadLine = false;
     } else {
         fprintf(stderr,"Is a tty\n");
+#ifndef NOREADLINE
+        char *tmp;
         useReadLine = true;
-        histFilename = getenv("HOME");
-        strcpy(buffer, histFilename );
-        strcat(buffer, "/.ficl_history");
+        tmp = getenv("HOME");
+        strcpy(histFilename, tmp );
+        strcat(histFilename, "/.ficl_history");
 
-        read_history( buffer );
+        read_history( histFilename );
+#endif
     }
 
     system = ficlSystemCreate(&athFsi);
@@ -225,6 +245,9 @@ int main(int argc, char **argv) {
 
     }
 
+    if(useReadLine) {
+        write_history( histFilename );
+    }
     ficlSystemDestroy(system);
     return 0;
 }

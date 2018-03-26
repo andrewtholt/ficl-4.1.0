@@ -3,6 +3,8 @@ s" dynamic.fth" sfind nip 0= [if]
     load dynamic.fth
 [then]
 
+.( Loading utils.fth ) cr
+
 -1 value libutils
 -1 value libc
 
@@ -36,6 +38,14 @@ s" libc.so.6"                  dlopen abort" failed" to libc
 : yield
     (yield) drop
 ;
+\  Take a string addres and length and make into null
+\ terminated C string.
+\ 
+: >c \ addr n - addr
+    2dup + 0 swap c!  \ addr n
+    drop
+;
+
 
 \ : test
 \     path-list s" PATH" getenv
