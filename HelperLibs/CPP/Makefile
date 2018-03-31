@@ -1,5 +1,5 @@
-CFLAGS=-g -fPIC
-CPP=g++
+CFLAGS=-g -fPIC 
+CPP=g++ -std=c++11
 
 all:	tst libcpp.so
 
