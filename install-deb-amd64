@@ -9,7 +9,7 @@ if [ $LEN -ne 64 ]; then
     exit -1
 fi
 
-
+ARCH="amd64"
 echo "Build debian package"
 echo "First make everything."
 
@@ -17,8 +17,8 @@ echo "First make everything."
 
 HERE=`pwd`
 
-DEST="./debian-x86_64/usr/local/bin"
-LIBS="./debian-x86_64/usr/local/lib"
+DEST="./debian-${ARCH}/usr/local/bin"
+LIBS="./debian-${ARCH}/usr/local/lib"
 
 
 if [ ! -d ${DEST} ]; then
@@ -56,8 +56,7 @@ if [ -x ./ficls ]; then
     strip ${DEST}/ficls
 fi
 
-# dpkg -b ./debian-x86 ${ROOT}/dists/main/test/binary-x86
-dpkg -b ./debian-x86_64 .
+dpkg -b ./debian-${ARCH} .
 
 # cd $ROOT
 # dpkg-scanpackages dists/main/test/binary-arm | gzip -c9 > ${ROOT}/dists/main/test/binary-arm/Packages.gz

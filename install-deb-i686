@@ -4,12 +4,12 @@
 
 LEN=`getconf LONG_BIT`
 
-if [ $LEN -ne 64 ]; then
+if [ $LEN -ne 32 ]; then
     echo "Attempting to build on wrong platform."
     exit -1
 fi
 
-
+ARCH=i686
 echo "Build debian package"
 echo "First make everything."
 
@@ -17,15 +17,32 @@ echo "First make everything."
 
 HERE=`pwd`
 
-DEST="./debian-x86_64/usr/local/bin"
-LIBS="./debian-x86_64/usr/local/lib"
+DEST="./debian-${ARCH}/usr/local/bin"
+LIBS="./debian-${ARCH}/usr/local/lib"
 
 
 if [ ! -d ${DEST} ]; then
     mkdir -p ${DEST}
+else
+    # Exists so empty it
+    #
+    cd ${DEST}
+    cd ..
+    rm -rf bin
+    pwd
+    cd $HERE
+    mkdir -p ${DEST}
 fi
 
 if [ ! -d ${LIBS} ]; then
+    mkdir -p ${LIBS}
+else
+    # Exists, so empty
+    #
+    cd $LIBS
+    cd ..
+    rm -rf lib
+    cd $HERE
     mkdir -p ${LIBS}
 fi
 
@@ -34,8 +51,6 @@ if [ ! -f libficl.so.4.1.0 ]; then
 else
     cp libficl.so.4.1.0 $LIBS
     cd $LIBS
-    mkdir -p ficl
-    cp $HERE/Lib/* ficl
 
     if [ ! -L libficl.so ]; then
         ln -s libficl.so.4.1.0 libficl.so
@@ -56,8 +71,7 @@ if [ -x ./ficls ]; then
     strip ${DEST}/ficls
 fi
 
-# dpkg -b ./debian-x86 ${ROOT}/dists/main/test/binary-x86
-dpkg -b ./debian-x86_64 .
+dpkg -b ./debian-${ARCH} .
 
 # cd $ROOT
 # dpkg-scanpackages dists/main/test/binary-arm | gzip -c9 > ${ROOT}/dists/main/test/binary-arm/Packages.gz
