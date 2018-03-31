@@ -12,5 +12,7 @@ cpp.o:	cpp.cpp cpp.h
 libcpp.so:	cpp.o
 	$(CC) -g -shared -Wl,-soname,libcpp.so -o libcpp.so cpp.o -lc -lstdc++
 
+install:	libcpp.so
+	./install.sh
 clean:
 	rm -f cscope.out *.o
