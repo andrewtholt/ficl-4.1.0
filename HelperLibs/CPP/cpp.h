@@ -3,6 +3,7 @@
 #include <stdbool.h>
 
 #ifdef __cplusplus
+#include <string>
 class myVector {
     private:
         std::vector<void *> *v;
