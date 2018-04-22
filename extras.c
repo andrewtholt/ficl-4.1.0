@@ -12,6 +12,11 @@
 
 #include "ficl.h"
 #include "extras.h"
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
 
 int verbose;
 char *loadPath;
@@ -641,12 +646,147 @@ static void athClrErrno(ficlVm * vm) {
 }
 
 static void athPerror(ficlVm * vm) {
-        perror("ficl");
+    perror("ficl");
 }
 
 static void athGetVM(ficlVm *vm) {
 
     ficlStackPushPointer(vm->dataStack, vm);
+}
+
+static void athSocket(ficlVm * vm) {
+    int             sock1;
+    sock1 = socket(AF_INET, SOCK_STREAM, 0);
+    ficlStackPushInteger(vm->dataStack, sock1);
+}
+
+static void athConnect(ficlVm * vm) {
+    char           *hostName;
+    int             len, port;
+    int             tmp;
+    int             sock1;
+    int             exitStatus = 0; 
+    struct sockaddr_in serv_addr;
+    //    struct hostent *hp; 
+    int rc;
+
+    struct addrinfo *result = NULL;
+    struct addrinfo hint;
+
+    char portNumber[8];
+
+    memset(&hint, 0 , sizeof(hint));
+
+    hint.ai_family = AF_INET;
+    hint.ai_socktype = SOCK_STREAM;
+
+    port = ficlStackPopInteger(vm->dataStack);
+
+    sprintf(portNumber,"%d",port);
+    len = ficlStackPopInteger(vm->dataStack);
+
+    hostName = (char *)ficlStackPopPointer(vm->dataStack);
+    hostName[len] = '\0';
+
+    rc = getaddrinfo(hostName, portNumber, &hint, &result);
+
+    if( 0 == rc ) {
+        sock1 = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+        if(sock1 < 0) { 
+            exitStatus = -1;
+        } else {
+            tmp = connect(sock1, result->ai_addr, result->ai_addrlen );
+            if (tmp < 0) 
+                exitStatus = -1;
+        }    
+    }    
+
+    if (exitStatus == 0) { 
+        ficlStackPushInteger(vm->dataStack, sock1);
+    }    
+    ficlStackPushInteger(vm->dataStack, exitStatus);
+}
+
+/* Stack: buffer len socket -- count */
+
+static void athRecv(ficlVm * vm) {
+    int             n;
+    int             sock2;
+    int             len;
+    int flag = 0;
+    char           *msg;
+
+    sock2 = ficlStackPopInteger(vm->dataStack);
+    len = ficlStackPopInteger(vm->dataStack);
+    msg =(char *)ficlStackPopPointer(vm->dataStack);
+    n = recv(sock2, msg, len, 0);
+    ficlStackPushInteger(vm->dataStack, n);
+}
+
+static void athSend(ficlVm * vm) {
+    char           *buffer;
+    int             len;
+    int flag=0;
+    int             sock2;
+    int             status;
+
+    sock2 = ficlStackPopInteger(vm->dataStack);
+    len = ficlStackPopInteger(vm->dataStack);
+    buffer = (char *)ficlStackPopPointer(vm->dataStack);
+
+    status = send(sock2, buffer, len, 0);
+    ficlStackPushInteger(vm->dataStack, status);
+    flag = ( status < 0 );
+    ficlStackPushInteger(vm->dataStack, flag);
+
+}
+
+static void athGetService(ficlVm *vm) {
+
+    char *serviceName=NULL;
+    uint32_t nameLen=0;
+    struct servent *serv=NULL;
+    uint32_t port=0;
+
+    nameLen = ficlStackPopInteger(vm->dataStack);
+    serviceName = (char *)ficlStackPopPointer(vm->dataStack);
+
+    serv = getservbyname(serviceName,NULL);
+    if (serv == NULL) {
+        port=0;
+    } else {
+        port=ntohs(serv->s_port);
+    }
+
+    ficlStackPushInteger(vm->dataStack, port);
+}
+
+static void athClose(ficlVm * vm) {
+    int             sock;
+
+    sock = ficlStackPopInteger(vm->dataStack);
+    close(sock);
+}
+// 
+// Add an end of line char (0x0a) to a string.
+// Space must already exist for this.
+//
+// Stack : addr len -- addr len+1
+//
+//
+static void athAddCr(ficlVm *vm) {
+    char *from;
+    int len; 
+
+    len = ficlStackPopInteger(vm->dataStack);
+    from = ficlStackPopPointer(vm->dataStack);
+
+    from[len] = (char)0x0a;
+
+    len++;
+
+    ficlStackPushPointer( vm->dataStack,from);
+    ficlStackPushInteger(vm->dataStack, len);
 }
 
 #endif
@@ -666,6 +806,15 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, "dlexec", athDlExec, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"getenv", athGetenv, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"get-vm", athGetVM, FICL_WORD_DEFAULT);
+
+    ficlDictionarySetPrimitive(dictionary, (char *)"socket", athSocket, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"socket-recv", athRecv, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"socket-send", athSend, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"socket-connect", athConnect, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"socket-service", athGetService, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"socket-close", athClose, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"add-cr", athAddCr, FICL_WORD_DEFAULT);
+
 #endif
 
     ficlDictionarySetPrimitive(dictionary, "break",    ficlPrimitiveBreak,    FICL_WORD_DEFAULT);
