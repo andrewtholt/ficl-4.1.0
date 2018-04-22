@@ -41,5 +41,13 @@ int main() {
 
     printf("And the key was %c\n", k);
 
+    memset(path,0,sizeof(path));
+
+    strncpy(path,"Head:",5);
+
+    rc=strCat(path,5,"tail",4);
+    printf("rc=%d\n", rc);
+    printf("headr>%s<\n", path);
+
 }
 

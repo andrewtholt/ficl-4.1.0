@@ -272,6 +272,16 @@ bool strToBool( char *msg ) {
     return res;
 }
 
+// Joins the forth string tail to the end of head.
+// Head must have sufficient space for the new string.
+//
+uint32_t strCat( char *head, uint32_t hLen, char *tail, uint32_t tLen) {
+    char *dest=NULL;
 
+    dest = head + hLen;
+    strncpy(dest, tail, tLen);
+
+    return(hLen+tLen);
+}
 
 

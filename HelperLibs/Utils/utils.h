@@ -33,4 +33,20 @@ char athGetKey() ;
 void fatal(char *message) ;
 char keystroke(int t) ;
 
+/**
+ * @name strToBool
+ * @brief Convert YES, ON, or TRUE to non-zero,or true, anything else 0, or false.
+ * @param[in] message Pointer to string.
+ * @return bool
+ */
 bool strToBool( char *msg );
+/**
+ * @name strCat
+ * @brief Join two forth strings together.
+ * @param[in] head Pointer to string.
+ * @param[in] hLen string length.
+ * @param[in] tail Pointer to string to append.
+ * @param[in] tLen string length.
+ * @return Total length
+ */
+uint32_t strCat( char *head, uint32_t hLen, char *tail, uint32_t tLen);
