@@ -21,6 +21,7 @@ s" libc.so.6"                  dlopen abort" failed" to libc
 1 0 s" athQkey"     libutils dlsym abort" Not Found" mkfunc ?key
 1 0 s" athGetKey"   libutils dlsym abort" Not Found" mkfunc key
 1 4 s" strCat"      libutils dlsym abort" Not Found" mkfunc strcat
+1 3 s" strCpy"      libutils dlsym abort" Not Found" mkfunc strcpy
 
 1024 mk-buffer drop value location
 1024 mk-buffer drop value path-list

@@ -284,4 +284,20 @@ uint32_t strCat( char *head, uint32_t hLen, char *tail, uint32_t tLen) {
     return(hLen+tLen);
 }
 
+void strCpy( char *to, char *from, uint32_t fLen) {
+    strncpy(to,from,fLen);
+}
+
+int test(int a, int b, int c) {
+    int sum = a+b+c;
+
+    printf("a=%d\n",a);
+    printf("b=%d\n",b);
+    printf("c=%d\n",c);
+    printf("sum=%d\n",sum);
+
+    return sum;
+}
+
+
 
