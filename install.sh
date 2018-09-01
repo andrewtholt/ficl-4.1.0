@@ -36,6 +36,7 @@ if [ -f $FICL_LIB ]; then
     cd $HERE
 
     sudo cp ./ficl.h /usr/local/include
+    sudo cp ./extras.h /usr/local/include
     sudo cp ./ficllocal.h /usr/local/include
     sudo cp ./ficltokens.h /usr/local/include
     sudo mkdir -p /usr/local/include/ficlplatform

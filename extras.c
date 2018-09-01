@@ -86,6 +86,35 @@ char *strsave( char *s ) {
 }
 
 
+static void athStrsave(ficlVm * vm) {
+    int             len;
+    char           *str;
+    char           *p;
+
+    len = ficlStackPopInteger(vm->dataStack);
+    str = ficlStackPopPointer(vm->dataStack);
+
+    str[len] = '\0';
+    p = (char *) strsave(str);
+
+    ficlStackPushPointer(vm->dataStack, p);
+    ficlStackPushInteger(vm->dataStack, len);
+}
+
+static void athStrFree(ficlVm * vm) {
+    int             len;
+    char           *str;
+    char           *p;
+
+    len = ficlStackPopInteger(vm->dataStack);
+    str = ficlStackPopPointer(vm->dataStack);
+
+    if( str != NULL) {
+        memset(str, 0, len);
+        ficlFree( str );
+    }
+}
+
 #endif /* FICL_ANSI */
 
 /*
@@ -824,6 +853,8 @@ void ficlSystemCompileExtras(ficlSystem *system)
 
 #ifndef FICL_ANSI
     ficlDictionarySetPrimitive(dictionary, "clock",    ficlPrimitiveClock,    FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "strsave",  athStrsave,    FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, "strfree",  athStrFree,    FICL_WORD_DEFAULT);
     ficlDictionarySetConstant(dictionary, "clocks/sec", CLOCKS_PER_SEC);
     ficlDictionarySetPrimitive(dictionary, "pwd",      ficlPrimitiveGetCwd,   FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "cd",       ficlPrimitiveChDir,    FICL_WORD_DEFAULT);
