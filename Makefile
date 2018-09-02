@@ -14,7 +14,8 @@ RANLIB = ranlib
 MAJOR = 4
 MINOR = 2.0
 
-all:	ficl ficl++ lib
+BINS=ficl ficl++
+all:	lib $(BINS)
 
 # ficl: main.o $(HEADERS) libficl.a
 ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
@@ -69,7 +70,7 @@ unix.o: ficlplatform/unix.c $(HEADERS)
 #       generic cleanup code
 #
 clean:
-	rm -f *.o *.a libficl.* ficl
+	rm -f *.o *.a libficl.* cscope.out $(BINS)
 
 install:	ficl
 	./install.sh
