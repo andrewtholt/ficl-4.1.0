@@ -50,7 +50,9 @@ if [ -d "HelperLibs" ]; then
     tput sgr0
 
     cd HelperLibs
-    ./build.sh install
+    if [ -x ./build.sh ] ; then
+        ./build.sh install
+    fi
 fi
 
 cd $HERE
