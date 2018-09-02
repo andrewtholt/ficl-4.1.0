@@ -83,14 +83,15 @@ void localCmds( char *ptr ) {
     char *historyFile ;
     char buffer[255];
 
-//    printf("Local >%s<\n",ptr); 
+    //    printf("Local >%s<\n",ptr); 
 
     if(!strcmp( ptr, "save" )) {
+#ifndef NOREADLINE
         historyFile = getenv("HOME");
         strcpy(buffer, historyFile );
         strcat(buffer, "/.ficl_history");
-
         write_history( buffer );
+#endif
     } else if( !strcmp( ptr,"help")) {
         fprintf(stderr,"Help\n");
     }
@@ -173,12 +174,14 @@ int main(int argc, char **argv) {
         fprintf(stderr,"Is a tty\n");
 #ifndef NOREADLINE
         char *tmp;
-        useReadLine = true;
         tmp = getenv("HOME");
         strcpy(histFilename, tmp );
         strcat(histFilename, "/.ficl_history");
 
         read_history( histFilename );
+#else
+#warning "No Readline"
+        useReadLine = false;
 #endif
     }
 
@@ -222,32 +225,33 @@ int main(int argc, char **argv) {
     char *buf;
 
     while (returnValue != FICL_VM_STATUS_USER_EXIT) {
-        if( useReadLine ) {
-            buf = readline(FICL_PROMPT);
+#ifndef NOREADLINE
+        buf = readline(FICL_PROMPT);
 
-            if( buf[0] == '^' ) {
-                localCmds( &buf[1] );
-            } else {
-                returnValue = ficlVmEvaluate(vm, buf);
-            }
-
-            if (buf[0]!=0) {
-                add_history(buf);
-            }
-            free(buf);
+        if( buf[0] == '^' ) {
+            localCmds( &buf[1] );
         } else {
-            fputs(FICL_PROMPT, stdout);
-            if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
-                break;
-            }
-            returnValue = ficlVmEvaluate(vm, buffer);
+            returnValue = ficlVmEvaluate(vm, buf);
         }
 
+        if (buf[0]!=0) {
+            add_history(buf);
+        }
+        free(buf);
+#else
+        fputs(FICL_PROMPT, stdout);
+        if (fgets(buffer, sizeof(buffer), stdin) == NULL) {
+            break;
+        }
+        returnValue = ficlVmEvaluate(vm, buffer);
+#endif
     }
 
+#ifndef NOREADLINE
     if(useReadLine) {
         write_history( histFilename );
     }
+#endif
     ficlSystemDestroy(system);
     return 0;
 }
