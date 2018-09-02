@@ -2300,7 +2300,9 @@ FMINUSROLL:
 				** in "i" (our local cache of *ip), and *jump* to the
 				** top of the switch statement.  --lch
 				*/
-				if ((ficlInstruction)fw->code < ficlInstructionLast)
+//                printf("%08x\n",( int) ficlInstructionLast);
+//				if ((ficlInstruction)fw->code < ficlInstructionLast)
+				if (fw->code < ficlInstructionLast)
 				{
 					instruction = (ficlInstruction)fw->code;
 					goto AGAIN;
