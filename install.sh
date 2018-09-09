@@ -4,6 +4,7 @@
 
 ./build.sh
 strip ./ficl
+strip ./ficl++
 
 HERE=$(pwd)
 
@@ -17,6 +18,7 @@ echo "Move ficl"
 tput sgr0
 
 sudo mv ./ficl /usr/local/bin
+sudo mv ./ficl++ /usr/local/bin
 
 FICL_LIB="libficl.so.4.2.0"
 

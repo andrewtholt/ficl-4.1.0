@@ -818,6 +818,18 @@ static void athAddCr(ficlVm *vm) {
     ficlStackPushInteger(vm->dataStack, len);
 }
 
+// 
+// Stack : -- hh mm ss
+//
+static void athGetTime(ficlVm *vm) {
+    time_t now = time(NULL);
+    struct tm *hms = localtime( &now );
+
+    ficlStackPushPointer( vm->dataStack,hms->tm_hour);
+    ficlStackPushPointer( vm->dataStack,hms->tm_min);
+    ficlStackPushPointer( vm->dataStack,hms->tm_sec);
+}
+
 #endif
 
 void ficlSystemCompileExtras(ficlSystem *system)
@@ -836,6 +848,7 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, (char *)"getenv", athGetenv, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"get-vm", athGetVM, FICL_WORD_DEFAULT);
 
+    ficlDictionarySetPrimitive(dictionary, (char *)"time", athGetTime, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"socket", athSocket, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"socket-recv", athRecv, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"socket-send", athSend, FICL_WORD_DEFAULT);

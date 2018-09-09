@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    bool useReadLine = false;
+    bool useReadLine = true;
     char histFilename[255];
     memset(histFilename,0,255);
 
