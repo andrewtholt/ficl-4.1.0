@@ -115,6 +115,27 @@ static void athPLCinit(ficlVm *vm) {
     ficlStackPushInteger( vm->dataStack, (int)failFlag );
 }
 
+static void athPLCaddIO(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+
+    int dlen = ficlStackPopInteger( vm->dataStack);
+    char *dir = (char *) ficlStackPopPointer( vm->dataStack);
+
+    int tlen = ficlStackPopInteger( vm->dataStack);
+    char *topic = (char *) ficlStackPopPointer( vm->dataStack);
+
+    int nlen = ficlStackPopInteger( vm->dataStack);
+    char *name = (char *) ficlStackPopPointer( vm->dataStack);
+
+    plc->addIOPoint(name, topic, dir );
+}
+
+static void athPLCrun(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+
+    plc->plcRun();
+}
+
 #endif
 
 void ficlSystemCompileCpp(ficlSystem *system) {
@@ -127,6 +148,8 @@ void ficlSystemCompileCpp(ficlSystem *system) {
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-sethost",  athPLCsetHost, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-setport",  athPLCsetPort, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-init",  athPLCinit, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-add-io",  athPLCaddIO, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-run",  athPLCrun, FICL_WORD_DEFAULT);
 #endif
 }
 

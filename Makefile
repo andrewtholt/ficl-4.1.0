@@ -5,7 +5,7 @@ HEADERS= ficl.h ficlplatform/unix.h
 #TARGET= -Dlinux  # riscos MOTO_CPU32 
 SHFLAGS = -fPIC
 # CFLAGS= -O $(SHFLAGS) -Wall -DATH
-CFLAGS= -g $(SHFLAGS) -Wall -DATH
+CFLAGS= -g $(SHFLAGS) -Wall -DATH -Wl,--no-as-needed
 CPPFLAGS= $(TARGET) -I.
 CC = gcc
 LIB = ar cr
@@ -14,7 +14,7 @@ RANLIB = ranlib
 MAJOR = 4
 MINOR = 2.0
 
-BINS=ficl ficl++
+BINS=ficl ficl-plc ficl++
 all:	lib $(BINS)
 
 # ficl: main.o $(HEADERS) libficl.a
@@ -26,9 +26,16 @@ lib: libficl.so.$(MAJOR).$(MINOR)
 ficl++.o:   ficl++.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	g++ -g -c ficl++.cpp -o ficl++.o
 
-ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	g++ $(CFLAGS) ficl++.o -o ficl++ -L. -lficl -lm -ldl
-#	g++ $(CFLAGS) --static ficl++.o -o ficl++ -L. -lficl -lm -ldl
+ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR) 
+	g++ $(CFLAGS) -DPLC ficl++.o -o ficl++ -L. -lficl -lm -ldl -I/usr/local/include -lreadline
+
+ficl-plc.o:   ficl-plc.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
+	g++ -g -c -DPLC ficl-plc.cpp -o ficl-plc.o 
+
+
+ficl-plc: ficl-plc.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR) 
+	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L/usr/local/lib -lplc -lreadline
+
 
 # static library build
 libficl.a: $(OBJECTS)

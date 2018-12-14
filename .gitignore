@@ -19,3 +19,4 @@ ficls
 makesoftcore
 debian-x86_64/**
 *.deb
+ficl-plc
