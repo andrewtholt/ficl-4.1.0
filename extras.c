@@ -830,6 +830,12 @@ static void athGetTime(ficlVm *vm) {
     ficlStackPushPointer( vm->dataStack,hms->tm_sec);
 }
 
+static void athMs(ficlVm *vm) {
+    int ms = ficlStackPopInteger(vm->dataStack) ;
+
+    usleep(1000 * ms );
+
+}
 #endif
 
 void ficlSystemCompileExtras(ficlSystem *system)
@@ -856,6 +862,7 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, (char *)"socket-service", athGetService, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"socket-close", athClose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"add-cr", athAddCr, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"ms", athMs, FICL_WORD_DEFAULT);
 
 #endif
 
@@ -868,7 +875,7 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, "clock",    ficlPrimitiveClock,    FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "strsave",  athStrsave,    FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "strfree",  athStrFree,    FICL_WORD_DEFAULT);
-    ficlDictionarySetConstant(dictionary, "clocks/sec", CLOCKS_PER_SEC);
+    ficlDictionarySetConstant(dictionary,  "clocks/sec", CLOCKS_PER_SEC);
     ficlDictionarySetPrimitive(dictionary, "pwd",      ficlPrimitiveGetCwd,   FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, "cd",       ficlPrimitiveChDir,    FICL_WORD_DEFAULT);
 #endif /* FICL_ANSI */

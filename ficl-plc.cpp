@@ -130,6 +130,53 @@ static void athPLCaddIO(ficlVm *vm) {
     plc->addIOPoint(name, topic, dir );
 }
 
+static void athPLCend(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    int ms = ficlStackPopInteger( vm->dataStack);
+
+    bool failFlag = plc->plcEnd(ms );
+    ficlStackPushInteger( vm->dataStack, (int)failFlag );
+}
+
+static void athPLCld(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    int len = ficlStackPopInteger( vm->dataStack);
+    char *name = (char *) ficlStackPopPointer( vm->dataStack);
+
+    plc->Ld( name );
+}
+
+static void athPLCandn(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    int len = ficlStackPopInteger( vm->dataStack);
+    char *name = (char *) ficlStackPopPointer( vm->dataStack);
+
+    plc->Andn( name );
+}
+
+static void athPLCor(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    int len = ficlStackPopInteger( vm->dataStack);
+    char *name = (char *) ficlStackPopPointer( vm->dataStack);
+
+    plc->Or( name );
+}
+
+static void athPLCverbose(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    int flag = ficlStackPopInteger( vm->dataStack);
+
+    plc->setVerbose( (bool) flag);
+}
+
+static void athPLCout(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    int len = ficlStackPopInteger( vm->dataStack);
+    char *name = (char *) ficlStackPopPointer( vm->dataStack);
+
+    plc->Out( name );
+}
+
 static void athPLCrun(ficlVm *vm) {
     plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
 
@@ -148,8 +195,15 @@ void ficlSystemCompileCpp(ficlSystem *system) {
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-sethost",  athPLCsetHost, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-setport",  athPLCsetPort, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-init",  athPLCinit, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-verbose",  athPLCverbose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-add-io",  athPLCaddIO, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-run",  athPLCrun, FICL_WORD_DEFAULT);
+
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-ld",  athPLCld, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-andn",  athPLCandn, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-or",  athPLCor, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-out",  athPLCout, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-end",  athPLCend, FICL_WORD_DEFAULT);
 #endif
 }
 
@@ -247,7 +301,7 @@ int main(int argc, char *argv[]) {
 
 
     if(verbose !=0) {
-        returnValue = ficlVmEvaluate(vm, ".ver .( " __DATE__ " ) cr quit");
+        returnValue = ficlVmEvaluate(vm, (char *)".ver .( " __DATE__ " ) cr quit");
         // returnValue = ficlVmEvaluate(vm, ".ver cr quit");
     }
 
