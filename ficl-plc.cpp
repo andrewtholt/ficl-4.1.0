@@ -186,6 +186,56 @@ static void athPLCrun(ficlVm *vm) {
     plc->plcRun();
 }
 
+static void athPLCgetSem(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+
+    sem_t *mutex = plc->getSem();
+
+    ficlStackPushPointer(vm->dataStack, (void *) mutex );
+}
+
+// 
+// Get Top plc stack entry DESTRUCTIVE
+//
+static void athPLCpop(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+
+    bool t = plc->fromStack();
+
+    int flag = (t) ? -1 : 0;
+
+    ficlStackPushInteger( vm->dataStack, (int)flag );
+}
+// 
+// Get Top plc stack entry NONE destructive
+//
+static void athPLCtos(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+
+    bool t = plc->getTOS();
+
+    int flag = (t) ? -1 : 0;
+
+    ficlStackPushInteger( vm->dataStack, (int)flag );
+}
+
+static void athPLCpush(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    int flag = (int )ficlStackPopInteger( vm->dataStack);
+
+    bool t = (flag == 0) ? false : true ;
+
+    plc->toStack(t);
+}
+
+static void athPLCdepth(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+
+    int d = plc->stackSize();
+
+    ficlStackPushInteger( vm->dataStack, (int)d );
+}
+
 #endif
 
 void ficlSystemCompileCpp(ficlSystem *system) {
@@ -193,6 +243,9 @@ void ficlSystemCompileCpp(ficlSystem *system) {
 
     ficlDictionarySetPrimitive(dictionary, (char *)"cpp-test", athCPPTest, FICL_WORD_DEFAULT);
 #ifdef PLC
+    // 
+    // PLC control functions.
+    //
     ficlDictionarySetPrimitive(dictionary, (char *)"new-plc",  athCreatePLC, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-dump",  athDumpPLC, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-sethost",  athPLCsetHost, FICL_WORD_DEFAULT);
@@ -201,12 +254,20 @@ void ficlSystemCompileCpp(ficlSystem *system) {
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-verbose",  athPLCverbose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-add-io",  athPLCaddIO, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-run",  athPLCrun, FICL_WORD_DEFAULT);
-
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-mutex",  athPLCgetSem, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-end",  athPLCend, FICL_WORD_DEFAULT);
+    // 
+    // PLC Logic functions.
+    //
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-ld",  athPLCld, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-andn",  athPLCandn, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-or",  athPLCor, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-out",  athPLCout, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, (char *)"plc-end",  athPLCend, FICL_WORD_DEFAULT);
+
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-pop",  athPLCpop, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-push",  athPLCpush, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-tos",  athPLCtos, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-depth",  athPLCdepth, FICL_WORD_DEFAULT);
 #endif
 }
 

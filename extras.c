@@ -474,6 +474,40 @@ static void ficlPrimitiveBreak(ficlVm *vm)
 
 #ifdef ATH
 #include <dlfcn.h>
+#include <semaphore.h>
+
+static void athSemPost(ficlVm * vm) {
+    sem_t *mutex;
+
+    mutex = ficlStackPopPointer(vm->dataStack);
+
+    int rc = sem_post( mutex );
+
+    ficlStackPushInteger(vm->dataStack, rc);
+
+}
+
+static void athSemWait(ficlVm * vm) {
+    sem_t *mutex;
+
+    mutex = ficlStackPopPointer(vm->dataStack);
+
+    int rc = sem_wait( mutex );
+
+    ficlStackPushInteger(vm->dataStack, rc);
+}
+
+static void athSemGetValue(ficlVm * vm) {
+    sem_t *mutex;
+    int value;
+
+    mutex = ficlStackPopPointer(vm->dataStack);
+
+    int rc = sem_getvalue( mutex, &value );
+
+    ficlStackPushInteger(vm->dataStack, value);
+    ficlStackPushInteger(vm->dataStack, rc);
+}
 
 static void athDlOpen(ficlVm * vm) {
     int libLen;
@@ -863,6 +897,10 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, (char *)"socket-close", athClose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"add-cr", athAddCr, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"ms", athMs, FICL_WORD_DEFAULT);
+
+    ficlDictionarySetPrimitive(dictionary, (char *)"sem-post", athSemPost, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"sem-wait", athSemWait, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"sem-value", athSemGetValue, FICL_WORD_DEFAULT);
 
 #endif
 

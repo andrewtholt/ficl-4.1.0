@@ -19,7 +19,7 @@ all:	lib $(BINS)
 
 # ficl: main.o $(HEADERS) libficl.a
 ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lreadline
+	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lreadline -pthread
 
 lib: libficl.so.$(MAJOR).$(MINOR)
 
@@ -27,7 +27,7 @@ ficl++.o:   ficl++.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	g++ -g -c ficl++.cpp -o ficl++.o
 
 ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR) 
-	g++ $(CFLAGS) -DPLC ficl++.o -o ficl++ -L. -lficl -lm -ldl -I/usr/local/include -lreadline
+	g++ $(CFLAGS) -DPLC ficl++.o -o ficl++ -L. -lficl -lm -ldl -I/usr/local/include -lreadline -pthread
 
 ficl-plc.o:   ficl-plc.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	g++ -g -c -DPLC ficl-plc.cpp -o ficl-plc.o 
