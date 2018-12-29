@@ -11,7 +11,7 @@ plc plc-dump cr
 
 1883 plc plc-setport abort" Set port failed"
 
-plc plc-dump cr
+s" ficl-test" plc plc-dump cr
 
 s" FORTH" plc plc-init abort" init failed."
 
@@ -50,7 +50,7 @@ s" FORTH" plc plc-init abort" init failed."
     s" STOP"  plc plc-andn
     s" LIGHT" plc plc-out
 
-    100 plc plc-end
+    1000 plc plc-end
 ;
 
     
