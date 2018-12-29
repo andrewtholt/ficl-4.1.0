@@ -67,7 +67,7 @@ if [ -d "./Lib" ]; then
 
     FICL_LIB="/usr/local/lib/ficl"
     cd Lib
-    mkdir -p $FICL_LIB
+    sudo mkdir -p $FICL_LIB
     sudo cp *.fth $FICL_LIB
 
     cd $HERE

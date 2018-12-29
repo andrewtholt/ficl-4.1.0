@@ -108,10 +108,10 @@ static void athPLCsetPort(ficlVm *vm) {
 }
 
 static void athPLCinit(ficlVm *vm) {
+    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
-
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
 
     bool failFlag=plc->initPlc(name);
 

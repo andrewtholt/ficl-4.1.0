@@ -13,7 +13,7 @@ plc plc-dump cr
 
 plc plc-dump cr
 
-plc plc-init abort" init failed."
+s" FORTH" plc plc-init abort" init failed."
 
 1 plc plc-verbose
 
