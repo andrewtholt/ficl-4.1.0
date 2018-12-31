@@ -228,6 +228,11 @@ int main(int argc, char **argv) {
 #ifndef NOREADLINE
         buf = readline(FICL_PROMPT);
 
+        if ( buf == NULL ) {
+            fprintf(stderr,"stdin closed\n");
+            exit(10);
+        }
+
         if( buf[0] == '^' ) {
             localCmds( &buf[1] );
         } else {

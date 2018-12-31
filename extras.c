@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -20,6 +22,7 @@
 
 int verbose;
 char *loadPath;
+
 #ifndef FICL_ANSI
 
 /*
@@ -476,6 +479,45 @@ static void ficlPrimitiveBreak(ficlVm *vm)
 #include <dlfcn.h>
 #include <semaphore.h>
 
+#define PID_PATH "/var/run/"
+// 
+// <pid file name> <len> -- status
+//
+static void athDaemon(ficlVm *vm) {
+
+    int nameLen = ficlStackPopInteger( vm->dataStack );
+    char *name = ficlStackPopPointer( vm->dataStack );
+    name[nameLen]=0;
+
+    int len = nameLen + strlen(PID_PATH) + 5;
+
+    char *pidFile = malloc( len );
+    if( pidFile ) {
+        strcpy(pidFile, PID_PATH);
+        strcat(pidFile, name );
+        strcat(pidFile,".pid");
+
+        FILE *fd=fopen(pidFile, "w+") ;
+        if( NULL != fd ) {
+            int pid=getpid();
+            fprintf(fd,"%d\n", pid);
+            fclose(fd);
+        }
+    }
+
+    daemonize = true;
+    int rc = daemon(true,false);
+
+    if ( rc !=0 ) {
+        FILE *fptr = fopen("/dev/stderr", "w");
+        fprintf(fptr, "Daemon failed %d\n",errno);
+        exit(errno);
+    }
+
+
+    ficlStackPushInteger(vm->dataStack, rc);
+}
+
 static void athSemPost(ficlVm * vm) {
     sem_t *mutex;
 
@@ -876,6 +918,7 @@ void ficlSystemCompileExtras(ficlSystem *system)
 {
     ficlDictionary *dictionary = ficlSystemGetDictionary(system);
 #ifdef ATH
+    ficlDictionarySetPrimitive(dictionary, (char *)"daemon",  athDaemon, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"perror", athPerror, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"errno", athGetErrno, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"clr-errno", athClrErrno, FICL_WORD_DEFAULT);
