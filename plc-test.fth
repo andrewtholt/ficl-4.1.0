@@ -11,7 +11,7 @@ plc plc-dump cr
 
 1883 plc plc-setport abort" Set port failed"
 
-s" ficl-test" plc plc-dump cr
+plc plc-dump cr
 
 s" FORTH" plc plc-init abort" init failed."
 
