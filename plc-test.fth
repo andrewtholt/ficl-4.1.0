@@ -39,7 +39,7 @@ s" FORTH" plc plc-init abort" init failed."
     >r
     s" LIGHT"
     s" /home/outside/BackFloodlight/cmnd/power"
-    s" IN"
+    s" OUT"
     r>
     plc-add-io
 ;
@@ -67,7 +67,7 @@ plc add-light
     0<> until
 ;
 
-s" plc" daemon
+\ s" plc" daemon
 plc plc-run
 
 go
