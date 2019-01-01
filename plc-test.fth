@@ -58,13 +58,17 @@ s" FORTH" plc plc-init abort" init failed."
 plc add-start
 plc add-stop
 plc add-light
-plc plc-run
 
 : go
+
     begin
         logic
         plc plc-mutex sem-wait
     0<> until
 ;
 
+s" plc" daemon
+plc plc-run
+
+go
 
