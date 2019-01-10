@@ -17,6 +17,6 @@ ficl++
 libficl.so.*
 ficls
 makesoftcore
-debian-x86_64/**
+debian-x86_64/usr
 *.deb
 ficl-plc
