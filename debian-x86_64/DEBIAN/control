@@ -1,0 +1,5 @@
+package: ficl
+maintainer: Andrew Holt
+version: 4.2.0
+architecture: ia64
+description: ficl

@@ -13,7 +13,8 @@ fi
 echo "Build debian package"
 echo "First make everything."
 
-./build.sh
+./build.sh -a ficl
+./build.sh -a ficl++
 
 HERE=`pwd`
 
@@ -29,26 +30,29 @@ if [ ! -d ${LIBS} ]; then
     mkdir -p ${LIBS}
 fi
 
-if [ ! -f libficl.so.4.1.0 ]; then
+if [ ! -f libficl.so.4.2.0 ]; then
     echo "No shared object."
 else
-    cp libficl.so.4.1.0 $LIBS
+    cp libficl.so.4.2.0 $LIBS
     cd $LIBS
     mkdir -p ficl
     cp $HERE/Lib/* ficl
 
     if [ ! -L libficl.so ]; then
-        ln -s libficl.so.4.1.0 libficl.so
+        ln -s libficl.so.4.2.0 libficl.so
     fi
 
     if [ ! -L libficl.so.4 ]; then
-        ln -s libficl.so.4.1.0 libficl.so.4
+        ln -s libficl.so.4.2.0 libficl.so.4
     fi
 fi
 cd $HERE
 
 cp ./ficl ${DEST}
 strip ${DEST}/ficl
+
+cp ./ficl++ ${DEST}
+strip ${DEST}/ficl++
 
 if [ -x ./ficls ]; then
     echo "And a static executable too."
