@@ -34,12 +34,6 @@ void localCmds( char *ptr ) {
 
 #include <iostream>
 
-#ifdef PLC
-#warning "PLC"
-#include "plcBase.h"
-#include "plcMQTT.h"
-#endif
-
 using namespace std;
 
 void usage() {
@@ -73,61 +67,11 @@ static void athCPPTest(ficlVm *vm) {
     cout << "C++ Main and extras works !!!" << endl;
 }
 
-#ifdef PLC
-static void athCreatePLC(ficlVm *vm) {
-
-    plcMQTT *plc = new plcMQTT();
-
-    ficlStackPushPointer(vm->dataStack, (void *) plc );
-
-}
-
-static void athDumpPLC(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
-
-    plc->plcDump();
-}
-
-static void athPLCsetHost(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
-    int nlen = ficlStackPopInteger( vm->dataStack);
-    char *name = (char *) ficlStackPopPointer( vm->dataStack);
-
-    name[nlen] = '\0';
-
-    bool failFlag=plc->setHost( name );
-    ficlStackPushInteger( vm->dataStack, (int)failFlag );
-}
-
-static void athPLCsetPort(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
-    int port = ficlStackPopInteger( vm->dataStack);
-
-    int failFlag=plc->setPort( port );
-    ficlStackPushInteger( vm->dataStack, (int)failFlag );
-}
-
-static void athPLCinit(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
-
-    bool failFlag=plc->initPlc();
-
-    ficlStackPushInteger( vm->dataStack, (int)failFlag );
-}
-
-#endif
 
 void ficlSystemCompileCpp(ficlSystem *system) {
     ficlDictionary *dictionary = ficlSystemGetDictionary(system);
 
     ficlDictionarySetPrimitive(dictionary, (char *)"cpp-test", athCPPTest, FICL_WORD_DEFAULT);
-#ifdef PLC
-    ficlDictionarySetPrimitive(dictionary, (char *)"new-plc",  athCreatePLC, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, (char *)"plc-dump",  athDumpPLC, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, (char *)"plc-sethost",  athPLCsetHost, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, (char *)"plc-setport",  athPLCsetPort, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, (char *)"plc-init",  athPLCinit, FICL_WORD_DEFAULT);
-#endif
 }
 
 int main(int argc, char *argv[]) {
