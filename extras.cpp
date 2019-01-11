@@ -36,7 +36,7 @@ static void ficlPrimitiveGetCwd(ficlVm *vm)
 
     directory = getcwd(NULL, 80);
     ficlVmTextOut(vm, directory);
-    ficlVmTextOut(vm, "\n");
+    ficlVmTextOut(vm, (char *)"\n");
     free(directory);
     return;
 }
@@ -59,13 +59,13 @@ static void ficlPrimitiveChDir(ficlVm *vm)
         int err = chdir(counted->text);
         if (err)
         {
-            ficlVmTextOut(vm, "Error: path not found\n");
+            ficlVmTextOut(vm,(char *) "Error: path not found\n");
             ficlVmThrow(vm, FICL_VM_STATUS_QUIT);
         }
     }
     else
     {
-        ficlVmTextOut(vm, "Warning (chdir): nothing happened\n");
+        ficlVmTextOut(vm, (char *)"Warning (chdir): nothing happened\n");
     }
     return;
 }
@@ -79,15 +79,21 @@ static void ficlPrimitiveClock(ficlVm *vm)
     return;
 }
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 char *strsave( char *s ) {
     char *p = (char *)NULL;
 
-    p = ficlMalloc(strlen(s)+1);
+    p = (char *)ficlMalloc(strlen(s)+1);
     strcpy(p,s);
 
     return(p);
 }
 
+#ifdef __cplusplus
+}
+#endif
 
 static void athStrsave(ficlVm * vm) {
     int             len;
@@ -95,7 +101,7 @@ static void athStrsave(ficlVm * vm) {
     char           *p;
 
     len = ficlStackPopInteger(vm->dataStack);
-    str = ficlStackPopPointer(vm->dataStack);
+    str = (char *)ficlStackPopPointer(vm->dataStack);
 
     str[len] = '\0';
     p = (char *) strsave(str);
@@ -110,7 +116,7 @@ static void athStrFree(ficlVm * vm) {
     char           *p;
 
     len = ficlStackPopInteger(vm->dataStack);
-    str = ficlStackPopPointer(vm->dataStack);
+    str = (char *)ficlStackPopPointer(vm->dataStack);
 
     if( str != NULL) {
         memset(str, 0, len);
@@ -181,7 +187,7 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
     char *ptr=(char *)NULL;
 
     nameLen = ficlStackPopInteger(vm->dataStack);
-    ptr=ficlStackPopPointer(vm->dataStack);
+    ptr= (char *)ficlStackPopPointer(vm->dataStack);
     name=strtok(ptr," ");
     name[nameLen] = '\0';
 
@@ -191,7 +197,7 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
         sprintf(buffer, "File not found :%s", name);
         ficlVmTextOut(vm, buffer);
         ficlVmTextOut(vm, FICL_COUNTED_STRING_GET_POINTER(*counted));
-        ficlVmTextOut(vm, "\n");
+        ficlVmTextOut(vm, (char *)"\n");
         ficlVmThrow(vm, FICL_VM_STATUS_QUIT);
     } else {
         strcpy(fullName, scratch);
@@ -205,7 +211,7 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
         sprintf(buffer, "Unable to open file %s", name);
         ficlVmTextOut(vm, buffer);
         ficlVmTextOut(vm, FICL_COUNTED_STRING_GET_POINTER(*counted));
-        ficlVmTextOut(vm, "\n");
+        ficlVmTextOut(vm, (char *)"\n");
         ficlVmThrow(vm, FICL_VM_STATUS_QUIT);
     }
     oldSourceId = vm->sourceId;
@@ -254,7 +260,7 @@ static void ficlDollarPrimitiveLoad(ficlVm * vm) {
             default:
                 vm->sourceId = oldSourceId;
                 fclose(f);
-                ficlVmThrowError(vm, "Error loading file <%s> line %d", FICL_COUNTED_STRING_GET_POINTER(*counted), line);
+                ficlVmThrowError(vm, (char *)"Error loading file <%s> line %d", FICL_COUNTED_STRING_GET_POINTER(*counted), line);
                 break;
         }
     }
@@ -286,7 +292,7 @@ static void ficlPrimitiveLoad(ficlVm * vm) {
     ficlVmGetString(vm, counted, '\n');
 
     if (FICL_COUNTED_STRING_GET_LENGTH(*counted) <= 0) {
-        ficlVmTextOut(vm, "Warning (load): nothing happened\n");
+        ficlVmTextOut(vm, (char *)"Warning (load): nothing happened\n");
         return;
     }
     name = FICL_COUNTED_STRING_GET_POINTER(*counted);
@@ -308,19 +314,16 @@ static void ficlPrimitiveSystem(ficlVm *vm)
     ficlCountedString *counted = (ficlCountedString *)vm->pad;
 
     ficlVmGetString(vm, counted, '\n');
-    if (FICL_COUNTED_STRING_GET_LENGTH(*counted) > 0)
-    {
+    if (FICL_COUNTED_STRING_GET_LENGTH(*counted) > 0) {
         int returnValue = system(FICL_COUNTED_STRING_GET_POINTER(*counted));
-        if (returnValue)
-        {
+
+        if (returnValue) {
             sprintf(vm->pad, "System call returned %d\n", returnValue);
             ficlVmTextOut(vm, vm->pad);
             ficlVmThrow(vm, FICL_VM_STATUS_QUIT);
         }
-    }
-    else
-    {
-        ficlVmTextOut(vm, "Warning (system): nothing happened\n");
+    } else {
+        ficlVmTextOut(vm, (char *)"Warning (system): nothing happened\n");
     }
     return;
 }
@@ -424,8 +427,7 @@ static void ficlPrimitiveLoad(ficlVm *vm)
  ** Dump a tab delimited file that summarizes the contents of the
  ** dictionary hash table by hashcode...
  */
-static void ficlPrimitiveSpewHash(ficlVm *vm)
-{
+static void ficlPrimitiveSpewHash(ficlVm *vm) {
     ficlHash *hash = ficlVmGetDictionary(vm)->forthWordlist;
     ficlWord *word;
     FILE *f;
@@ -436,19 +438,17 @@ static void ficlPrimitiveSpewHash(ficlVm *vm)
         ficlVmThrow(vm, FICL_VM_STATUS_OUT_OF_TEXT);
 
     f = fopen(vm->pad, "w");
-    if (!f)
-    {
-        ficlVmTextOut(vm, "unable to open file\n");
+    if (!f) {
+        ficlVmTextOut(vm, (char *)"unable to open file\n");
         return;
     }
 
-    for (i = 0; i < hashSize; i++)
-    {
+    for (i = 0; i < hashSize; i++) {
         int n = 0;
 
         word = hash->table[i];
-        while (word)
-        {
+
+        while (word) {
             n++;
             word = word->link;
         }
@@ -456,8 +456,7 @@ static void ficlPrimitiveSpewHash(ficlVm *vm)
         fprintf(f, "%d\t%d", i, n);
 
         word = hash->table[i];
-        while (word)
-        {
+        while (word) {
             fprintf(f, "\t%s", word->name);
             word = word->link;
         }
@@ -486,12 +485,12 @@ static void ficlPrimitiveBreak(ficlVm *vm)
 static void athDaemon(ficlVm *vm) {
 
     int nameLen = ficlStackPopInteger( vm->dataStack );
-    char *name = ficlStackPopPointer( vm->dataStack );
+    char *name = (char *)ficlStackPopPointer( vm->dataStack );
     name[nameLen]=0;
 
     int len = nameLen + strlen(PID_PATH) + 5;
 
-    char *pidFile = malloc( len );
+    char *pidFile = (char *)malloc( len );
     if( pidFile ) {
         strcpy(pidFile, PID_PATH);
         strcat(pidFile, name );
@@ -521,7 +520,7 @@ static void athDaemon(ficlVm *vm) {
 static void athSemPost(ficlVm * vm) {
     sem_t *mutex;
 
-    mutex = ficlStackPopPointer(vm->dataStack);
+    mutex = (sem_t *)ficlStackPopPointer(vm->dataStack);
 
     int rc = sem_post( mutex );
 
@@ -532,7 +531,7 @@ static void athSemPost(ficlVm * vm) {
 static void athSemWait(ficlVm * vm) {
     sem_t *mutex;
 
-    mutex = ficlStackPopPointer(vm->dataStack);
+    mutex = (sem_t *)ficlStackPopPointer(vm->dataStack);
 
     int rc = sem_wait( mutex );
 
@@ -543,7 +542,7 @@ static void athSemGetValue(ficlVm * vm) {
     sem_t *mutex;
     int value;
 
-    mutex = ficlStackPopPointer(vm->dataStack);
+    mutex = (sem_t *)ficlStackPopPointer(vm->dataStack);
 
     int rc = sem_getvalue( mutex, &value );
 
@@ -557,7 +556,7 @@ static void athDlOpen(ficlVm * vm) {
     void *res;
 
     libLen = ficlStackPopInteger(vm->dataStack);
-    lib = ficlStackPopPointer(vm->dataStack);
+    lib = (char *)ficlStackPopPointer(vm->dataStack);
 
     lib[libLen] = '\0';
 
@@ -593,25 +592,32 @@ static void athDlExec(ficlVm * vm) {
     int argCount=0;
     int resCount=0;
 
-    void *(*func)();
+    void *(*func)(void * ...);
+    void *(*func0)();
     void *args[MAX_ARGS];
     void *res;
+    void *tmp;
 
-    func = ficlStackPopPointer(vm->dataStack);
+//    func = (void *(*)(...) ) ficlStackPopPointer(vm->dataStack);
+    tmp = ficlStackPopPointer(vm->dataStack);
+
     argCount = ficlStackPopInteger(vm->dataStack);
     resCount = ficlStackPopInteger(vm->dataStack);
 
+    func =  ( void *(*)(void *,...))tmp;
+    func0 = ( void *(*)())tmp;
     for (i=0; i < argCount;i++) {
         args[i]  = ficlStackPopPointer(vm->dataStack);
     }
-
     if ( 0 == argCount && 0 == resCount ) {
-        (void)(*func)();
+//        (void)(*func)();
+        (void)(*func0)();
     } else {
+        
         if(resCount > 0 ) {
             switch(argCount) {
                 case 0:
-                    res=(*func)();
+                    res=(*func0)();
                     break;
                 case 1:
                     res=(*func)(args[0]);
@@ -642,7 +648,7 @@ static void athDlExec(ficlVm * vm) {
         } else {
             switch(argCount) {
                 case 1:
-                    (void)(*func)(args[0]);
+                    (void)(*func0)();
                     break;
                 case 2:
                     (void)(*func)(args[1],args[0]);
@@ -693,11 +699,11 @@ static void athDlSym(ficlVm * vm) {
 
     h = ficlStackPopPointer( vm->dataStack);
     symbolLen = ficlStackPopInteger( vm->dataStack);
-    symbol = ficlStackPopPointer(vm->dataStack);
+    symbol = (char *)ficlStackPopPointer(vm->dataStack);
     symbol[symbolLen]=0x00;
 
     error = dlerror();
-    symbol = dlsym(h,symbol);
+    symbol = (char *)dlsym(h,symbol);
     error = dlerror();
 
     if( error != (char *)NULL ) {
@@ -884,7 +890,7 @@ static void athAddCr(ficlVm *vm) {
     int len; 
 
     len = ficlStackPopInteger(vm->dataStack);
-    from = ficlStackPopPointer(vm->dataStack);
+    from = (char *)ficlStackPopPointer(vm->dataStack);
 
     from[len] = (char)0x0a;
 
@@ -901,9 +907,9 @@ static void athGetTime(ficlVm *vm) {
     time_t now = time(NULL);
     struct tm *hms = localtime( &now );
 
-    ficlStackPushPointer( vm->dataStack,hms->tm_hour);
-    ficlStackPushPointer( vm->dataStack,hms->tm_min);
-    ficlStackPushPointer( vm->dataStack,hms->tm_sec);
+    ficlStackPushInteger( vm->dataStack,hms->tm_hour);
+    ficlStackPushInteger( vm->dataStack,hms->tm_min);
+    ficlStackPushInteger( vm->dataStack,hms->tm_sec);
 }
 
 static void athMs(ficlVm *vm) {
@@ -923,11 +929,11 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, (char *)"errno", athGetErrno, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"clr-errno", athClrErrno, FICL_WORD_DEFAULT);
 
-    ficlDictionarySetPrimitive(dictionary, "dlopen", athDlOpen, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "dlclose", athDlClose, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "dlsym", athDlSym, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "dlerror", athDlError, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "dlexec", athDlExec, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"dlopen", athDlOpen, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"dlclose", athDlClose, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"dlsym", athDlSym, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"dlerror", athDlError, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"dlexec", athDlExec, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"getenv", athGetenv, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"get-vm", athGetVM, FICL_WORD_DEFAULT);
 
@@ -947,18 +953,18 @@ void ficlSystemCompileExtras(ficlSystem *system)
 
 #endif
 
-    ficlDictionarySetPrimitive(dictionary, "break",    ficlPrimitiveBreak,    FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "load",     ficlPrimitiveLoad,     FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "spewhash", ficlPrimitiveSpewHash, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "system",   ficlPrimitiveSystem,   FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"break", ficlPrimitiveBreak, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"load", ficlPrimitiveLoad,   FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"spewhash", ficlPrimitiveSpewHash, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"system", ficlPrimitiveSystem, FICL_WORD_DEFAULT);
 
 #ifndef FICL_ANSI
-    ficlDictionarySetPrimitive(dictionary, "clock",    ficlPrimitiveClock,    FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "strsave",  athStrsave,    FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "strfree",  athStrFree,    FICL_WORD_DEFAULT);
-    ficlDictionarySetConstant(dictionary,  "clocks/sec", CLOCKS_PER_SEC);
-    ficlDictionarySetPrimitive(dictionary, "pwd",      ficlPrimitiveGetCwd,   FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, "cd",       ficlPrimitiveChDir,    FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"clock", ficlPrimitiveClock, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"strsave",  athStrsave,    FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"strfree",  athStrFree,    FICL_WORD_DEFAULT);
+    ficlDictionarySetConstant(dictionary,  (char *)"clocks/sec", CLOCKS_PER_SEC);
+    ficlDictionarySetPrimitive(dictionary, (char *)"pwd", ficlPrimitiveGetCwd,   FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"cd",  ficlPrimitiveChDir,    FICL_WORD_DEFAULT);
 #endif /* FICL_ANSI */
 
     return;

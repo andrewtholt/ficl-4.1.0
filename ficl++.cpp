@@ -11,6 +11,7 @@ extern "C" {
 
 
     extern char *loadPath;
+    extern char *strsave(char *);
     extern int verbose;
 }
 void localCmds( char *ptr ) {
@@ -168,7 +169,7 @@ int main(int argc, char *argv[]) {
 
 
     if(verbose !=0) {
-        returnValue = ficlVmEvaluate(vm, ".ver .( " __DATE__ " ) cr quit");
+        returnValue = ficlVmEvaluate(vm, (char *)".ver .( " __DATE__ " ) cr quit");
         // returnValue = ficlVmEvaluate(vm, ".ver cr quit");
     }
 
