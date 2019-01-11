@@ -19,6 +19,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+#include <string>
+#include <iostream>
 
 int verbose;
 char *loadPath;
@@ -918,6 +920,17 @@ static void athMs(ficlVm *vm) {
     usleep(1000 * ms );
 
 }
+
+// Make a new C++ string, contents on stack
+static void athCPPString(ficlVm *vm) {
+    int len = ficlStackPopInteger(vm->dataStack);
+    char *c = (char *)ficlStackPopPointer(vm->dataStack);
+
+    std::string *s = new std::string(c);
+
+    ficlStackPushPointer( vm->dataStack, (void *)s );
+}
+
 #endif
 
 void ficlSystemCompileExtras(ficlSystem *system)
@@ -930,6 +943,8 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, (char *)"clr-errno", athClrErrno, FICL_WORD_DEFAULT);
 
     ficlDictionarySetPrimitive(dictionary, (char *)"dlopen", athDlOpen, FICL_WORD_DEFAULT);
+
+    ficlDictionarySetPrimitive(dictionary, (char *)"new-string", athCPPString, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"dlclose", athDlClose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"dlsym", athDlSym, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"dlerror", athDlError, FICL_WORD_DEFAULT);
