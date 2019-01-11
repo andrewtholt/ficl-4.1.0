@@ -931,6 +931,27 @@ static void athCPPString(ficlVm *vm) {
     ficlStackPushPointer( vm->dataStack, (void *)s );
 }
 
+static void athCPPCout(ficlVm *vm) {
+    std::string *s = (std::string *)ficlStackPopPointer(vm->dataStack);
+
+    std::cout << *s ;
+}
+
+static void athCPPat(ficlVm *vm) {
+    std::string *s = (std::string *)ficlStackPopPointer(vm->dataStack);
+
+    const char *a = s->c_str();
+    ficlStackPushPointer( vm->dataStack,(void *)a);
+    ficlStackPushInteger( vm->dataStack,s->length());
+}
+
+static void athCPPput(ficlVm *vm) {
+    std::string *s = (std::string *)ficlStackPopPointer(vm->dataStack);
+    int len = ficlStackPopInteger(vm->dataStack);
+    char *c = (char *)ficlStackPopPointer(vm->dataStack);
+
+    s->assign( c, len );
+}
 #endif
 
 void ficlSystemCompileExtras(ficlSystem *system)
@@ -945,6 +966,10 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, (char *)"dlopen", athDlOpen, FICL_WORD_DEFAULT);
 
     ficlDictionarySetPrimitive(dictionary, (char *)"new-string", athCPPString, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"cout", athCPPCout, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"string@", athCPPat, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"string!", athCPPput, FICL_WORD_DEFAULT);
+
     ficlDictionarySetPrimitive(dictionary, (char *)"dlclose", athDlClose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"dlsym", athDlSym, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"dlerror", athDlError, FICL_WORD_DEFAULT);
