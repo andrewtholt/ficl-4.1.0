@@ -113,7 +113,7 @@ static void athStrsave(ficlVm * vm) {
 static void athStrFree(ficlVm * vm) {
     int             len;
     char           *str;
-    char           *p;
+//    char           *p;
 
     len = ficlStackPopInteger(vm->dataStack);
     str = (char *)ficlStackPopPointer(vm->dataStack);
@@ -285,7 +285,7 @@ static void ficlPrimitiveLoad(ficlVm * vm) {
 
     char            filename[BUFFER_SIZE];
 
-    extern char    *loadPath;
+//    extern char    *loadPath;
     char           *name;
 
     ficlCountedString *counted = (ficlCountedString *) filename;
@@ -777,7 +777,7 @@ static void athConnect(ficlVm * vm) {
     int             tmp;
     int             sock1;
     int             exitStatus = 0; 
-    struct sockaddr_in serv_addr;
+//    struct sockaddr_in serv_addr;
     //    struct hostent *hp; 
     int rc;
 
@@ -824,7 +824,7 @@ static void athRecv(ficlVm * vm) {
     int             n;
     int             sock2;
     int             len;
-    int flag = 0;
+//    int flag = 0;
     char           *msg;
 
     sock2 = ficlStackPopInteger(vm->dataStack);
