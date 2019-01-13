@@ -12,6 +12,7 @@ extern "C" {
 
     extern char *loadPath;
     extern int verbose;
+    extern char *strsave(char *);
 }
 void localCmds( char *ptr ) {
     char *historyFile ;
