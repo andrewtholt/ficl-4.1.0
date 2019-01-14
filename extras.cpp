@@ -965,6 +965,7 @@ void ficlSystemCompileExtras(ficlSystem *system)
 
     ficlDictionarySetPrimitive(dictionary, (char *)"dlopen", athDlOpen, FICL_WORD_DEFAULT);
 
+    // C++ class access
     ficlDictionarySetPrimitive(dictionary, (char *)"new-string", athCPPString, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"cout", athCPPCout, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"string@", athCPPat, FICL_WORD_DEFAULT);
