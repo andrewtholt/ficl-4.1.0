@@ -38,7 +38,7 @@ void localCmds( char *ptr ) {
 #ifdef PLC
 #warning "PLC"
 #include "plcBase.h"
-#include "plcMQTT.h"
+#include "plcDatabase.h"
 #endif
 
 using namespace std;
@@ -77,20 +77,20 @@ static void athCPPTest(ficlVm *vm) {
 #ifdef PLC
 static void athCreatePLC(ficlVm *vm) {
 
-    plcMQTT *plc = new plcMQTT();
+    plcDatabase *plc = new plcDatabase();
 
     ficlStackPushPointer(vm->dataStack, (void *) plc );
 
 }
 
 static void athDumpPLC(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
     plc->plcDump();
 }
 
 static void athPLCsetHost(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int nlen = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -101,7 +101,7 @@ static void athPLCsetHost(ficlVm *vm) {
 }
 
 static void athPLCsetPort(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int port = ficlStackPopInteger( vm->dataStack);
 
     int failFlag=plc->setPort( port );
@@ -109,7 +109,7 @@ static void athPLCsetPort(ficlVm *vm) {
 }
 
 static void athPLCinit(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
@@ -120,7 +120,7 @@ static void athPLCinit(ficlVm *vm) {
 }
 
 static void athPLCaddIO(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
     int dlen = ficlStackPopInteger( vm->dataStack);
     char *dir = (char *) ficlStackPopPointer( vm->dataStack);
@@ -135,7 +135,7 @@ static void athPLCaddIO(ficlVm *vm) {
 }
 
 static void athPLCend(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int ms = ficlStackPopInteger( vm->dataStack);
 
     bool failFlag = plc->plcEnd(ms );
@@ -143,7 +143,7 @@ static void athPLCend(ficlVm *vm) {
 }
 
 static void athPLCld(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -151,7 +151,7 @@ static void athPLCld(ficlVm *vm) {
 }
 
 static void athPLCldr(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -159,7 +159,7 @@ static void athPLCldr(ficlVm *vm) {
 }
 
 static void athPLCldf(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -167,7 +167,7 @@ static void athPLCldf(ficlVm *vm) {
 }
 
 static void athPLCldn(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -175,7 +175,7 @@ static void athPLCldn(ficlVm *vm) {
 }
 
 static void athPLCand(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -183,7 +183,7 @@ static void athPLCand(ficlVm *vm) {
 }
 
 static void athPLCandn(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -191,7 +191,7 @@ static void athPLCandn(ficlVm *vm) {
 }
 
 static void athPLCandr(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -199,7 +199,7 @@ static void athPLCandr(ficlVm *vm) {
 }
 
 static void athPLCandf(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -207,7 +207,7 @@ static void athPLCandf(ficlVm *vm) {
 }
 
 static void athPLCor(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -215,7 +215,7 @@ static void athPLCor(ficlVm *vm) {
 }
 
 static void athPLCorn(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -223,7 +223,7 @@ static void athPLCorn(ficlVm *vm) {
 }
 
 static void athPLCorr(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -231,7 +231,7 @@ static void athPLCorr(ficlVm *vm) {
 }
 
 static void athPLCorf(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -239,14 +239,14 @@ static void athPLCorf(ficlVm *vm) {
 }
 
 static void athPLCverbose(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int flag = ficlStackPopInteger( vm->dataStack);
 
     plc->setVerbose( (bool) flag);
 }
 
 static void athPLCout(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -254,7 +254,7 @@ static void athPLCout(ficlVm *vm) {
 }
 
 static void athPLCoutn(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int len = ficlStackPopInteger( vm->dataStack);
     char *name = (char *) ficlStackPopPointer( vm->dataStack);
 
@@ -262,24 +262,24 @@ static void athPLCoutn(ficlVm *vm) {
 }
 
 static void athPLCrun(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
-    plc->plcRun();
+//    plc->plcRun();
 }
 
 static void athPLCgetSem(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
-    sem_t *mutex = plc->getSem();
+//    sem_t *mutex = plc->getSem();
 
-    ficlStackPushPointer(vm->dataStack, (void *) mutex );
+//    ficlStackPushPointer(vm->dataStack, (void *) mutex );
 }
 
 // 
 // Get Top plc stack entry DESTRUCTIVE
 //
 static void athPLCpop(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
     bool t = plc->fromStack();
 
@@ -291,7 +291,7 @@ static void athPLCpop(ficlVm *vm) {
 // Get Top plc stack entry NONE destructive
 //
 static void athPLCtos(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
     bool t = plc->getTOS();
 
@@ -301,7 +301,7 @@ static void athPLCtos(ficlVm *vm) {
 }
 
 static void athPLCpush(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
     int flag = (int )ficlStackPopInteger( vm->dataStack);
 
     bool t = (flag == 0) ? false : true ;
@@ -310,7 +310,7 @@ static void athPLCpush(ficlVm *vm) {
 }
 
 static void athPLCdepth(ficlVm *vm) {
-    plcMQTT *plc = (plcMQTT *)ficlStackPopPointer( vm->dataStack);
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
 
     int d = plc->stackSize();
 
@@ -334,8 +334,8 @@ void ficlSystemCompileCpp(ficlSystem *system) {
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-init",  athPLCinit, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-verbose",  athPLCverbose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-add-io",  athPLCaddIO, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, (char *)"plc-run",  athPLCrun, FICL_WORD_DEFAULT);
-    ficlDictionarySetPrimitive(dictionary, (char *)"plc-mutex",  athPLCgetSem, FICL_WORD_DEFAULT);
+//    ficlDictionarySetPrimitive(dictionary, (char *)"plc-run",  athPLCrun, FICL_WORD_DEFAULT);
+//    ficlDictionarySetPrimitive(dictionary, (char *)"plc-mutex",  athPLCgetSem, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-end",  athPLCend, FICL_WORD_DEFAULT);
     // 
     // PLC Logic functions.
