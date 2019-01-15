@@ -317,6 +317,13 @@ static void athPLCdepth(ficlVm *vm) {
     ficlStackPushInteger( vm->dataStack, (int)d );
 }
 
+static void athPLCsetDbName(ficlVm *vm) {
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
+    int len = (int )ficlStackPopInteger( vm->dataStack);
+    char *db = (char * )ficlStackPopPointer( vm->dataStack);
+
+    plc->setDBname( db );
+}
 #endif
 
 void ficlSystemCompileCpp(ficlSystem *system) {
@@ -334,6 +341,7 @@ void ficlSystemCompileCpp(ficlSystem *system) {
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-init",  athPLCinit, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-verbose",  athPLCverbose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-add-io",  athPLCaddIO, FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-dbname!",  athPLCsetDbName, FICL_WORD_DEFAULT);
 //    ficlDictionarySetPrimitive(dictionary, (char *)"plc-run",  athPLCrun, FICL_WORD_DEFAULT);
 //    ficlDictionarySetPrimitive(dictionary, (char *)"plc-mutex",  athPLCgetSem, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-end",  athPLCend, FICL_WORD_DEFAULT);
