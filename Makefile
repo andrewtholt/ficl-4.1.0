@@ -31,11 +31,12 @@ ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	g++ $(CFLAGS) -DPLC ficl++.o -o ficl++ -L. -lficl -lm -ldl -I/usr/local/include -lreadline -pthread
 
 ficl-plc.o:   ficl-plc.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	g++ -g -c -DPLC ficl-plc.cpp -o ficl-plc.o 
+	g++ -g -c -I../../PLC -DPLC ficl-plc.cpp -o ficl-plc.o 
 
 
 ficl-plc: ficl-plc.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR) 
-	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L/usr/local/lib -lplc -lreadline
+#	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L/usr/local/lib -lplc -lreadline
+	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L../../PLC -lplc -lreadline
 
 
 # static library build
