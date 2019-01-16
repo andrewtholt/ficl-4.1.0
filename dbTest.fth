@@ -31,6 +31,10 @@ object --> sub c-plc
         name len this --> plc@ plc-value@
     ;
 
+    : verbose { 2:this -- }
+        1 this --> plc@ plc-verbose
+    ;
+
 end-class
 
 c-plc --> new plc
@@ -47,4 +51,27 @@ plc --> dump
     s" START" plc --> plc@ plc-value!
 ;
 
+: set-stop
+    s" STOP" plc --> plc@ plc-value!
+;
+
 s" STOP" plc --> value@ type cr
+
+-1 value tst
+plc --> plc@ to tst
+
+: run
+    s" START" tst plc-ld
+    s" MOTOR" tst plc-or
+    s" STOP" tst plc-andn
+    s" MOTOR" tst plc-out
+    1 tst plc-end
+    s" OFF" set-start
+    s" START" tst plc-ld
+    s" MOTOR" tst plc-or
+    s" STOP" tst plc-andn
+    s" MOTOR" tst plc-out
+    1 tst plc-end
+;
+
+
