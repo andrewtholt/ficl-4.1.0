@@ -74,4 +74,17 @@ plc --> plc@ to tst
     1 tst plc-end
 ;
 
+: toggle-start
+    s" ON" set-start
+    run
+    s" OFF" set-start
+    run
+;
+
+: toggle-stop
+    s" ON" set-stop
+    run
+    s" OFF" set-stop
+    run
+;
 
