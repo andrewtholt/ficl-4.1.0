@@ -1,13 +1,50 @@
+only forth also oop definitions
 
--1 value plc
+object --> sub c-plc
+    c-string obj: .db-name
+    c-byte   obj: .clean
+    c-ptr    obj: .plc
 
-new-plc to plc
+    : init { 2:this -- }
+        ." plc-init" cr
+        new-plc this --> .plc --> set-ptr
 
-s" /tmp/tst.db" plc plc-dbname!
+    ;
 
-plc plc-dump
+    : plc@ { 2:this -- }
+        this --> .plc --> get-ptr  
+    ;
 
-0 plc plc-db-setup
+    : dump { 2:this -- }
+        this --> plc@  plc-dump
+    ;
 
-plc plc-dump
+    : set-name { addr len 2:this -- }
+        addr len this --> plc@ plc-dbname!
+    ;
 
+    : setup { clean 2:this -- }
+        clean this --> plc@ plc-db-setup
+    ;
+
+    : value@ { name len 2:this -- }
+        name len this --> plc@ plc-value@
+    ;
+
+end-class
+
+c-plc --> new plc
+
+plc --> methods
+
+s" /tmp/tst.db" plc --> set-name
+
+plc --> dump
+
+0 plc --> setup
+
+: set-start
+    s" START" plc --> plc@ plc-value!
+;
+
+s" STOP" plc --> value@ type cr
