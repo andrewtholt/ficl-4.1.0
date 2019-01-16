@@ -331,6 +331,18 @@ static void athPLCdbSetup(ficlVm *vm) {
 
     plc->dbSetup( clean );
 }
+
+static void athPLCgetValue(ficlVm *vm) {
+    plcDatabase *plc = (plcDatabase *)ficlStackPopPointer( vm->dataStack);
+    int len = (int )ficlStackPopInteger( vm->dataStack);
+    char *name = (char * )ficlStackPopPointer( vm->dataStack);
+
+    // WARNING not sure of the side affects of static.
+    static string value = plc->getValue( name );
+    ficlStackPushPointer(vm->dataStack, (void *) value.c_str() );
+    ficlStackPushInteger(vm->dataStack, (int ) value.length() );
+
+}
 #endif
 
 void ficlSystemCompileCpp(ficlSystem *system) {
@@ -349,6 +361,8 @@ void ficlSystemCompileCpp(ficlSystem *system) {
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-verbose",  athPLCverbose, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-add-io",  athPLCaddIO, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-dbname!",  athPLCsetDbName, FICL_WORD_DEFAULT);
+
+    ficlDictionarySetPrimitive(dictionary, (char *)"plc-value@",  athPLCgetValue, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"plc-db-setup", athPLCdbSetup, FICL_WORD_DEFAULT);
 //    ficlDictionarySetPrimitive(dictionary, (char *)"plc-run",  athPLCrun, FICL_WORD_DEFAULT);
 //    ficlDictionarySetPrimitive(dictionary, (char *)"plc-mutex",  athPLCgetSem, FICL_WORD_DEFAULT);
