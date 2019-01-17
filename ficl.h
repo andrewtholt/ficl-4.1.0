@@ -1792,6 +1792,7 @@ typedef struct ficlFile
 {
     FILE *f;
     char filename[256];
+    int fd;
 } ficlFile;
 
 

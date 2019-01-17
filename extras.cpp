@@ -476,6 +476,15 @@ static void ficlPrimitiveBreak(ficlVm *vm)
     return;
 }
 
+static void athFdGet(ficlVm *vm) {
+    ficlFile *ff = (ficlFile *)ficlStackPopPointer(vm->dataStack);
+
+    int fd = fileno(ff->f);
+
+    ficlStackPushInteger(vm->dataStack, fd);
+}
+
+
 #ifdef ATH
 #include <dlfcn.h>
 #include <semaphore.h>
@@ -957,6 +966,7 @@ static void athCPPput(ficlVm *vm) {
 void ficlSystemCompileExtras(ficlSystem *system)
 {
     ficlDictionary *dictionary = ficlSystemGetDictionary(system);
+    ficlDictionarySetPrimitive(dictionary, (char *)"fd@",  athFdGet, FICL_WORD_DEFAULT);
 #ifdef ATH
     ficlDictionarySetPrimitive(dictionary, (char *)"daemon",  athDaemon, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"perror", athPerror, FICL_WORD_DEFAULT);
