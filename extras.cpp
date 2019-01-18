@@ -476,6 +476,11 @@ static void ficlPrimitiveBreak(ficlVm *vm)
     return;
 }
 
+#ifdef ATH
+#include <dlfcn.h>
+#include <semaphore.h>
+#define PID_PATH "/var/run/"
+
 static void athFdGet(ficlVm *vm) {
     ficlFile *ff = (ficlFile *)ficlStackPopPointer(vm->dataStack);
 
@@ -483,13 +488,6 @@ static void athFdGet(ficlVm *vm) {
 
     ficlStackPushInteger(vm->dataStack, fd);
 }
-
-
-#ifdef ATH
-#include <dlfcn.h>
-#include <semaphore.h>
-
-#define PID_PATH "/var/run/"
 // 
 // <pid file name> <len> -- status
 //
@@ -966,8 +964,9 @@ static void athCPPput(ficlVm *vm) {
 void ficlSystemCompileExtras(ficlSystem *system)
 {
     ficlDictionary *dictionary = ficlSystemGetDictionary(system);
-    ficlDictionarySetPrimitive(dictionary, (char *)"fd@",  athFdGet, FICL_WORD_DEFAULT);
 #ifdef ATH
+    #warning "ATH HERE"
+    ficlDictionarySetPrimitive(dictionary, (char *)"fd@",  athFdGet, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"daemon",  athDaemon, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"perror", athPerror, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"errno", athGetErrno, FICL_WORD_DEFAULT);
