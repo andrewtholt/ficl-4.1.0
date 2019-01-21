@@ -1370,7 +1370,7 @@ static void ficlPrimitiveCountedStringQuoteIm(ficlVm *vm)
         ficlVmGetString(vm, counted, '\"');
         ficlStackPushPointer(vm->dataStack, counted);
 		/* move HERE past string so it doesn't get overwritten.  --lch */
-		ficlVmDictionaryAllot(vm, dictionary, counted->length + sizeof(ficlUnsigned8));
+		ficlVmDictionaryAllot(vm, dictionary, counted->length + sizeof(ficlUnsigned8)+1);
     }
     else    /* FICL_VM_STATE_COMPILE state */
     {
