@@ -35,9 +35,14 @@ object --> sub c-plc
         1 this --> plc@ plc-verbose
     ;
 
+    : set { 2:state 2:iopoint 2:this -- }
+        state iopoint this --> plc@ plc-value!
+    ;
+
 end-class
 
 c-plc --> new plc
+plc --> verbose
 
 plc --> methods
 
@@ -48,11 +53,11 @@ plc --> dump
 0 plc --> setup
 
 : set-start
-    s" START" plc --> plc@ plc-value!
+    s" START" plc --> set
 ;
 
 : set-stop
-    s" STOP" plc --> plc@ plc-value!
+    s" STOP" plc --> set
 ;
 
 s" STOP" plc --> value@ type cr
@@ -61,12 +66,6 @@ s" STOP" plc --> value@ type cr
 plc --> plc@ to tst
 
 : run
-    s" START" tst plc-ld
-    s" MOTOR" tst plc-or
-    s" STOP" tst plc-andn
-    s" MOTOR" tst plc-out
-    1 tst plc-end
-    s" OFF" set-start
     s" START" tst plc-ld
     s" MOTOR" tst plc-or
     s" STOP" tst plc-andn
