@@ -20,7 +20,7 @@ all:	lib $(BINS)
 
 # ficl: main.o $(HEADERS) libficl.a
 ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lstdc++ -lreadline -pthread
+	g++   $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lstdc++ -lreadline -pthread
 
 lib: libficl.so.$(MAJOR).$(MINOR)
 
