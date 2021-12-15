@@ -1,13 +1,14 @@
-OBJECTS= dictionary.o system.o fileaccess.o float.o double.o prefix.o search.o softcore.o stack.o tools.o vm.o primitives.o bit.o lzuncompress.o unix.o utility.o hash.o callback.o word.o extras.o
+include profile.mk
+
+OBJECTS= dictionary.o system.o fileaccess.o float.o double.o prefix.o search.o softcore.o stack.o tools.o vm.o primitives.o bit.o lzuncompress.o unix.o utility.o hash.o callback.o word.o extras.o 
 HEADERS= ficl.h ficlplatform/unix.h
 #
 # Flags for shared library
 #TARGET= -Dlinux  # riscos MOTO_CPU32 
 SHFLAGS = -fPIC
-# CFLAGS= -O $(SHFLAGS) -Wall -DATH
-CFLAGS= -g $(SHFLAGS) -Wall -DATH -Wl,--no-as-needed
-CPPFLAGS= $(CFLAGS) $(TARGET) -I. -fPIC
-CXXFLAGS= $(CPPFLAGS)
+# CFLAGS= -O $(SHFLAGS) -m32 -Wno-format -Wall -DATH
+CFLAGS= -g $(SHFLAGS) -Wall -DATH -DNOREADLINE
+CPPFLAGS= $(TARGET) -I. -DATH
 CC = gcc
 LIB = ar cr
 RANLIB = ranlib
@@ -15,8 +16,7 @@ RANLIB = ranlib
 MAJOR = 4
 MINOR = 2.0
 
-BINS=ficl ficl-plc ficl++
-all:	lib $(BINS)
+all:	ficl ficl++ lib
 
 # ficl: main.o $(HEADERS) libficl.a
 ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
@@ -27,7 +27,7 @@ lib: libficl.so.$(MAJOR).$(MINOR)
 ficl++.o:   ficl++.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	g++ -g -c ficl++.cpp -o ficl++.o
 
-ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR) 
+ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	g++ $(CFLAGS) -DPLC ficl++.o -o ficl++ -L. -lficl -lm -ldl -I/usr/local/include -lreadline -pthread
 
 ficl-plc.o:   ficl-plc.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
