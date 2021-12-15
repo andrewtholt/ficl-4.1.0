@@ -20,7 +20,7 @@ all:	ficl ficl++ lib
 
 # ficl: main.o $(HEADERS) libficl.a
 ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	$(CC) $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl
+	g++   $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lstdc++ -lreadline -pthread
 
 lib: libficl.so.$(MAJOR).$(MINOR)
 
@@ -28,8 +28,16 @@ ficl++.o:   ficl++.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
 	g++ -g -c ficl++.cpp -o ficl++.o
 
 ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	g++ $(CFLAGS) ficl++.o -o ficl++ -L. -lficl -lm -ldl -lreadline
-#	g++ $(CFLAGS) --static ficl++.o -o ficl++ -L. -lficl -lm -ldl
+	g++ $(CFLAGS) -DPLC ficl++.o -o ficl++ -L. -lficl -lm -ldl -I/usr/local/include -lreadline -pthread
+
+ficl-plc.o:   ficl-plc.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
+	g++ -g -c -I../../PLC -DPLC ficl-plc.cpp -o ficl-plc.o 
+
+
+ficl-plc: ficl-plc.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR) 
+#	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L/usr/local/lib -lplc -lreadline
+	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L../../PLC -lplc -lreadline
+
 
 # static library build
 libficl.a: $(OBJECTS)
@@ -71,7 +79,7 @@ unix.o: ficlplatform/unix.c $(HEADERS)
 #       generic cleanup code
 #
 clean:
-	rm -f *.o *.a libficl.* ficl
+	rm -f *.o *.a libficl.* cscope.out $(BINS)
 
 install:	ficl
 	./install.sh
