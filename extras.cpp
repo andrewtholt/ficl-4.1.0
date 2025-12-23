@@ -43,7 +43,77 @@ static void ficlPrimitiveGetCwd(ficlVm *vm)
     return;
 }
 
+void displayLineHex(char *a) {
+    int i;
 
+    for(i=0;i<16;i++) {
+        printf(" %02x",*(a++));
+    }
+}
+
+void displayLineAscii(char *a) {
+    int i;
+
+    printf(":");
+
+    for(i=0;i<16;i++) {
+        if( (*a < 0x20 ) || (*a > 0x80 )) {
+            printf(".");
+            a++;
+        } else {
+            printf("%c",*(a++));
+        }
+    }
+    printf("\r\n");
+}
+
+static void athDump(ficlVm*vm) {
+    int length  = ficlStackPopInteger(vm->dataStack);
+    char *address = (char *)ficlStackPopPointer(vm->dataStack);
+
+    int lines=length/16;
+
+    if(lines ==0 ) {
+        lines=1;
+    }
+
+    int i=0;
+    for( i = 0; i<length;i+=16) {
+        printf("%08x:", (uintptr_t)address);
+        displayLineHex( address );
+        displayLineAscii( address );
+        address +=16;
+    }
+}
+
+int buffsplit(char *tst, int len, char **out, int max) {
+    char *found;
+    int i = 0 ;
+
+    max--;
+
+    tst[len]='\0';
+
+    while((found = strsep(&tst," ")) != NULL) {
+        if ( i >= max ) {
+            out[i++] = tst;
+            break;
+        } else {
+            out[i++] = found;
+        }
+    }
+    return i;
+}
+
+static void athBuffSplit(ficlVm*vm) {
+    printf("buffsplit\n");
+    int max  = ficlStackPopInteger(vm->dataStack);
+    char **out = (char **)ficlStackPopPointer(vm->dataStack);
+    int len  = ficlStackPopInteger(vm->dataStack);
+    char *str = (char *)ficlStackPopPointer(vm->dataStack);
+
+    int cnt = buffsplit(str,len,out,max);
+}
 
 /*
  ** Ficl interface to _chdir (Win32)
@@ -1009,12 +1079,14 @@ void ficlSystemCompileExtras(ficlSystem *system)
     ficlDictionarySetPrimitive(dictionary, (char *)"system", ficlPrimitiveSystem, FICL_WORD_DEFAULT);
 
 #ifndef FICL_ANSI
+    ficlDictionarySetPrimitive(dictionary, (char *)"mdump", athDump, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"clock", ficlPrimitiveClock, FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"strsave",  athStrsave,    FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"strfree",  athStrFree,    FICL_WORD_DEFAULT);
     ficlDictionarySetConstant(dictionary,  (char *)"clocks/sec", CLOCKS_PER_SEC);
     ficlDictionarySetPrimitive(dictionary, (char *)"pwd", ficlPrimitiveGetCwd,   FICL_WORD_DEFAULT);
     ficlDictionarySetPrimitive(dictionary, (char *)"cd",  ficlPrimitiveChDir,    FICL_WORD_DEFAULT);
+    ficlDictionarySetPrimitive(dictionary, (char *)"buffsplit",  athBuffSplit,    FICL_WORD_DEFAULT);
 #endif /* FICL_ANSI */
 
     return;

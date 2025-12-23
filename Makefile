@@ -16,27 +16,15 @@ RANLIB = ranlib
 MAJOR = 4
 MINOR = 2.0
 
-all:	ficl ficl++ lib
+all:	ficl lib
 
 # ficl: main.o $(HEADERS) libficl.a
 ficl: main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	g++   $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lstdc++ -lreadline -pthread
+	g++   $(CFLAGS) $(LDFLAGS) main.o -o ficl -L. -lficl -lm -ldl -lstdc++ -pthread
 
 lib: libficl.so.$(MAJOR).$(MINOR)
 
-ficl++.o:   ficl++.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	g++ -g -c ficl++.cpp -o ficl++.o
 
-ficl++: ficl++.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	g++ $(CFLAGS) -DPLC ficl++.o -o ficl++ -L. -lficl -lm -ldl -I/usr/local/include -lreadline -pthread
-
-ficl-plc.o:   ficl-plc.cpp main.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR)
-	g++ -g -c -I../../PLC -DPLC ficl-plc.cpp -o ficl-plc.o 
-
-
-ficl-plc: ficl-plc.o $(HEADERS) libficl.so.$(MAJOR).$(MINOR) 
-#	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L/usr/local/lib -lplc -lreadline
-	g++ $(CFLAGS) -DPLC ficl-plc.o -o ficl-plc -L. -lficl -lm -ldl -lpthread -lmosquitto -lsqlite3 -L../../PLC -lplc -lreadline
 
 
 # static library build

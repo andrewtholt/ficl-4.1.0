@@ -1,4 +1,6 @@
 
+.( Hello from test ) cr
+
 : tst 
     begin
         ." Hello " cr
